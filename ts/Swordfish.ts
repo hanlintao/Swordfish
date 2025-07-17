@@ -1013,52 +1013,52 @@ export class Swordfish {
             menu.popup();
         });
         let fileMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Open...', accelerator: 'CmdOrCtrl+O', click: () => { Swordfish.addFile(); } }
+            { label: '打开...', accelerator: 'CmdOrCtrl+O', click: () => { Swordfish.addFile(); } }
         ]);
         let tagsMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Insert Tag "1"', accelerator: 'CmdOrCtrl+1', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 1 }); } },
-            { label: 'Insert Tag "2"', accelerator: 'CmdOrCtrl+2', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 2 }); } },
-            { label: 'Insert Tag "3"', accelerator: 'CmdOrCtrl+3', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 3 }); } },
-            { label: 'Insert Tag "4"', accelerator: 'CmdOrCtrl+4', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 4 }); } },
-            { label: 'Insert Tag "5"', accelerator: 'CmdOrCtrl+5', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 5 }); } },
-            { label: 'Insert Tag "6"', accelerator: 'CmdOrCtrl+6', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 6 }); } },
-            { label: 'Insert Tag "7"', accelerator: 'CmdOrCtrl+7', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 7 }); } },
-            { label: 'Insert Tag "8"', accelerator: 'CmdOrCtrl+8', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 8 }); } },
-            { label: 'Insert Tag "8"', accelerator: 'CmdOrCtrl+9', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 9 }); } },
-            { label: 'Insert Tag "10"', accelerator: 'CmdOrCtrl+0', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 10 }); } }
+            { label: '插入标签"1"', accelerator: 'CmdOrCtrl+1', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 1 }); } },
+            { label: '插入标签"2"', accelerator: 'CmdOrCtrl+2', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 2 }); } },
+            { label: '插入标签"3"', accelerator: 'CmdOrCtrl+3', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 3 }); } },
+            { label: '插入标签"4"', accelerator: 'CmdOrCtrl+4', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 4 }); } },
+            { label: '插入标签"5"', accelerator: 'CmdOrCtrl+5', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 5 }); } },
+            { label: '插入标签"6"', accelerator: 'CmdOrCtrl+6', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 6 }); } },
+            { label: '插入标签"7"', accelerator: 'CmdOrCtrl+7', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 7 }); } },
+            { label: '插入标签"8"', accelerator: 'CmdOrCtrl+8', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 8 }); } },
+            { label: '插入标签"9"', accelerator: 'CmdOrCtrl+9', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 9 }); } },
+            { label: '插入标签"10"', accelerator: 'CmdOrCtrl+0', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', { tag: 10 }); } }
         ]);
         let editMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Undo', accelerator: 'CmdOrCtrl+Z', click: () => { Swordfish.undo() } },
+            { label: '撤销', accelerator: 'CmdOrCtrl+Z', click: () => { Swordfish.undo() } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Cut', accelerator: 'CmdOrCtrl+X', click: () => { Swordfish.cut() } },
-            { label: 'Copy', accelerator: 'CmdOrCtrl+C', click: () => { Swordfish.copy(); } },
-            { label: 'Paste', accelerator: 'CmdOrCtrl+V', click: () => { Swordfish.paste() } },
-            { label: 'Select All', accelerator: 'CmdOrCtrl+A', click: () => { Swordfish.selectAll(); } },
+            { label: '剪切', accelerator: 'CmdOrCtrl+X', click: () => { Swordfish.cut() } },
+            { label: '复制', accelerator: 'CmdOrCtrl+C', click: () => { Swordfish.copy(); } },
+            { label: '粘贴', accelerator: 'CmdOrCtrl+V', click: () => { Swordfish.paste() } },
+            { label: '全选', accelerator: 'CmdOrCtrl+A', click: () => { Swordfish.selectAll(); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Edit Previous Segment', accelerator: 'PageUp', click: () => { Swordfish.mainWindow.webContents.send('previous-segment'); } },
-            { label: 'Edit Next Segment', accelerator: 'PageDown', click: () => { Swordfish.mainWindow.webContents.send('next-segment'); } },
-            { label: 'Go To Segment...', accelerator: 'CmdOrCtrl+G', click: () => { Swordfish.mainWindow.webContents.send('go-to'); } },
+            { label: '编辑上一片段', accelerator: 'PageUp', click: () => { Swordfish.mainWindow.webContents.send('previous-segment'); } },
+            { label: '编辑下一片段', accelerator: 'PageDown', click: () => { Swordfish.mainWindow.webContents.send('next-segment'); } },
+            { label: '跳转到片段...', accelerator: 'CmdOrCtrl+G', click: () => { Swordfish.mainWindow.webContents.send('go-to'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Edit Source Text', accelerator: 'Alt+F2', click: () => { Swordfish.mainWindow.webContents.send('edit-source'); } },
+            { label: '编辑源文本', accelerator: 'Alt+F2', click: () => { Swordfish.mainWindow.webContents.send('edit-source'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Edit Next Untranslated Segment', accelerator: 'CmdOrCtrl+U', click: () => { Swordfish.mainWindow.webContents.send('next-untranslated'); } },
-            { label: 'Edit Next Unconfirmed Segment', accelerator: 'CmdOrCtrl+Shift+U', click: () => { Swordfish.mainWindow.webContents.send('next-unconfirmed'); } },
+            { label: '编辑下一个未翻译片段', accelerator: 'CmdOrCtrl+U', click: () => { Swordfish.mainWindow.webContents.send('next-untranslated'); } },
+            { label: '编辑下一个未确认片段', accelerator: 'CmdOrCtrl+Shift+U', click: () => { Swordfish.mainWindow.webContents.send('next-unconfirmed'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Save Segment Changes', accelerator: 'Alt+Enter', click: () => { Swordfish.mainWindow.webContents.send('save-edit', { confirm: false, next: 'none' }); } },
-            { label: 'Discard Segment Changes', accelerator: 'Esc', click: () => { Swordfish.mainWindow.webContents.send('cancel-edit'); } },
+            { label: '保存片段更改', accelerator: 'Alt+Enter', click: () => { Swordfish.mainWindow.webContents.send('save-edit', { confirm: false, next: 'none' }); } },
+            { label: '放弃片段更改', accelerator: 'Esc', click: () => { Swordfish.mainWindow.webContents.send('cancel-edit'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Change Case', accelerator: 'CmdOrCtrl+Alt+C', click: () => { Swordfish.mainWindow.webContents.send('change-case'); } },
+            { label: '大小写转换', accelerator: 'CmdOrCtrl+Alt+C', click: () => { Swordfish.mainWindow.webContents.send('change-case'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Split Segment', accelerator: 'CmdOrCtrl+H', click: () => { Swordfish.mainWindow.webContents.send('split-segment'); } },
-            { label: 'Merge With Next Segment', accelerator: 'CmdOrCtrl+J', click: () => { Swordfish.mainWindow.webContents.send('merge-next'); } },
+            { label: '拆分片段', accelerator: 'CmdOrCtrl+H', click: () => { Swordfish.mainWindow.webContents.send('split-segment'); } },
+            { label: '合并到下一个片段', accelerator: 'CmdOrCtrl+J', click: () => { Swordfish.mainWindow.webContents.send('merge-next'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Replace Text', accelerator: 'CmdOrCtrl+Alt+F', click: () => { Swordfish.mainWindow.webContents.send('replace-text'); } },
+            { label: '替换文本', accelerator: 'CmdOrCtrl+Alt+F', click: () => { Swordfish.mainWindow.webContents.send('replace-text'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Insert Tag', accelerator: 'CmdOrCtrl+T', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', {}); } },
-            new MenuItem({ label: 'Insert Tags...', submenu: tagsMenu }),
-            { label: 'Insert Next Tag', accelerator: 'CmdOrCtrl+Shift+T', click: () => { Swordfish.mainWindow.webContents.send('insert-next-tag'); } },
-            { label: 'Insert Remaining Tags', accelerator: 'CmdOrCtrl+Alt+T', click: () => { Swordfish.mainWindow.webContents.send('insert-remaining-tags'); } },
-            { label: 'Remove All Tags', accelerator: 'CmdOrCtrl+Alt+Shift+R', click: () => { Swordfish.mainWindow.webContents.send('remove-tags'); } },
+            { label: '插入标签', accelerator: 'CmdOrCtrl+T', click: () => { Swordfish.mainWindow.webContents.send('insert-tag', {}); } },
+            new MenuItem({ label: '插入标签...', submenu: tagsMenu }),
+            { label: '插入下一个标签', accelerator: 'CmdOrCtrl+Shift+T', click: () => { Swordfish.mainWindow.webContents.send('insert-next-tag'); } },
+            { label: '插入剩余标签', accelerator: 'CmdOrCtrl+Alt+T', click: () => { Swordfish.mainWindow.webContents.send('insert-remaining-tags'); } },
+            { label: '移除所有标签', accelerator: 'CmdOrCtrl+Alt+Shift+R', click: () => { Swordfish.mainWindow.webContents.send('remove-tags'); } },
         ]);
         let nextMT: string = 'Alt+Right';
         let previousMT: string = 'Alt+Left';
@@ -1067,97 +1067,97 @@ export class Swordfish {
             previousMT = 'Ctrl+Alt+Left';
         }
         let viewMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Projects', accelerator: 'F6', click: () => { Swordfish.viewProjects(); } },
-            { label: 'Memories', accelerator: 'F7', click: () => { Swordfish.viewMemories(); } },
-            { label: 'Glossaries', accelerator: 'F8', click: () => { Swordfish.viewGlossaries(); } },
+            { label: '项目', accelerator: 'F6', click: () => { Swordfish.viewProjects(); } },
+            { label: '记忆库', accelerator: 'F7', click: () => { Swordfish.viewMemories(); } },
+            { label: '术语库', accelerator: 'F8', click: () => { Swordfish.viewGlossaries(); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Sort Segments', accelerator: 'F3', click: () => { Swordfish.mainWindow.webContents.send('sort-segments'); } },
-            { label: 'Filter Segments', accelerator: 'CmdOrCtrl+F', click: () => { Swordfish.mainWindow.webContents.send('filter-segments'); } },
+            { label: '片段排序', accelerator: 'F3', click: () => { Swordfish.mainWindow.webContents.send('sort-segments'); } },
+            { label: '片段过滤', accelerator: 'CmdOrCtrl+F', click: () => { Swordfish.mainWindow.webContents.send('filter-segments'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Show/Hide Notes', accelerator: 'F2', click: () => { Swordfish.toggleNotes(); } },
+            { label: '显示/隐藏批注', accelerator: 'F2', click: () => { Swordfish.toggleNotes(); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Close Selected Tab', accelerator: 'CmdOrCtrl+W', click: () => { Swordfish.closeSelectedTab(); } },
+            { label: '关闭选中标签页', accelerator: 'CmdOrCtrl+W', click: () => { Swordfish.closeSelectedTab(); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'First Page', accelerator: 'CmdOrCtrl+Shift+PageUp', click: () => { Swordfish.mainWindow.webContents.send('first-page'); } },
-            { label: 'Previous Page', accelerator: 'CmdOrCtrl+PageUp', click: () => { Swordfish.mainWindow.webContents.send('previous-page'); } },
-            { label: 'Next Page', accelerator: 'CmdOrCtrl+PageDown', click: () => { Swordfish.mainWindow.webContents.send('next-page'); } },
-            { label: 'Last Page', accelerator: 'CmdOrCtrl+Shift+PageDown', click: () => { Swordfish.mainWindow.webContents.send('last-page'); } },
+            { label: '首页', accelerator: 'CmdOrCtrl+Shift+PageUp', click: () => { Swordfish.mainWindow.webContents.send('first-page'); } },
+            { label: '上一页', accelerator: 'CmdOrCtrl+PageUp', click: () => { Swordfish.mainWindow.webContents.send('previous-page'); } },
+            { label: '下一页', accelerator: 'CmdOrCtrl+PageDown', click: () => { Swordfish.mainWindow.webContents.send('next-page'); } },
+            { label: '末页', accelerator: 'CmdOrCtrl+Shift+PageDown', click: () => { Swordfish.mainWindow.webContents.send('last-page'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Next Translation Memory Match', accelerator: 'CmdOrCtrl+Alt+Right', click: () => { Swordfish.mainWindow.webContents.send('next-match'); } },
-            { label: 'Previous Translation Memory Match', accelerator: 'CmdOrCtrl+Alt+Left', click: () => { Swordfish.mainWindow.webContents.send('previous-match'); } },
+            { label: '下一个记忆库匹配', accelerator: 'CmdOrCtrl+Alt+Right', click: () => { Swordfish.mainWindow.webContents.send('next-match'); } },
+            { label: '上一个记忆库匹配', accelerator: 'CmdOrCtrl+Alt+Left', click: () => { Swordfish.mainWindow.webContents.send('previous-match'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Next Machine Translation', accelerator: nextMT, click: () => { Swordfish.mainWindow.webContents.send('next-mt'); } },
-            { label: 'Previous Machine Translation', accelerator: previousMT, click: () => { Swordfish.mainWindow.webContents.send('previous-mt'); } },
+            { label: '下一个机器翻译', accelerator: nextMT, click: () => { Swordfish.mainWindow.webContents.send('next-mt'); } },
+            { label: '上一个机器翻译', accelerator: previousMT, click: () => { Swordfish.mainWindow.webContents.send('previous-mt'); } },
             new MenuItem({ type: 'separator' }),
-            new MenuItem({ label: 'Toggle Full Screen', role: 'togglefullscreen' })
+            new MenuItem({ label: '切换全屏', role: 'togglefullscreen' })
         ]);
         if (!app.isPackaged) {
-            viewMenu.append(new MenuItem({ label: 'Open Development Tools', accelerator: 'F12', click: () => { BrowserWindow.getFocusedWindow()?.webContents.openDevTools() } }));
+            viewMenu.append(new MenuItem({ label: '打开开发者工具', accelerator: 'F12', click: () => { BrowserWindow.getFocusedWindow()?.webContents.openDevTools() } }));
         }
         let projectsMenu: Menu = Menu.buildFromTemplate([
-            { label: 'New Project', accelerator: 'CmdOrCtrl+N', click: () => { Swordfish.showAddProject(); } },
-            { label: 'Edit Project', click: () => { Swordfish.editProject(); } },
-            { label: 'Translate Projects', click: () => { Swordfish.translateProjects(); } },
-            { label: 'Export Translations', accelerator: 'CmdOrCtrl+Alt+S', click: () => { Swordfish.mainWindow.webContents.send('export-translations'); } },
-            { label: 'Export Translations as TMX File', click: () => { Swordfish.mainWindow.webContents.send('export-translations-tmx'); } },
+            { label: '新建项目', accelerator: 'CmdOrCtrl+N', click: () => { Swordfish.showAddProject(); } },
+            { label: '编辑项目', click: () => { Swordfish.editProject(); } },
+            { label: '翻译项目', click: () => { Swordfish.translateProjects(); } },
+            { label: '导出翻译', accelerator: 'CmdOrCtrl+Alt+S', click: () => { Swordfish.mainWindow.webContents.send('export-translations'); } },
+            { label: '导出翻译为TMX文件', click: () => { Swordfish.mainWindow.webContents.send('export-translations-tmx'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Export as XLIFF 2.0', click: () => { Swordfish.mainWindow.webContents.send('export-xliff-review'); } },
-            { label: 'Update from XLIFF File', click: () => { Swordfish.importReviewedXLIFF() } },
+            { label: '导出为XLIFF 2.0', click: () => { Swordfish.mainWindow.webContents.send('export-xliff-review'); } },
+            { label: '从XLIFF文件更新', click: () => { Swordfish.importReviewedXLIFF() } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Export All Memory Matches as TMX', click: () => { Swordfish.mainWindow.webContents.send('export-matches'); } },
-            { label: 'Export All Recognized Terms as TBX', click: () => { Swordfish.mainWindow.webContents.send('export-terminology-all'); } },
+            { label: '导出所有记忆库匹配为TMX', click: () => { Swordfish.mainWindow.webContents.send('export-matches'); } },
+            { label: '导出所有已识别术语为TBX', click: () => { Swordfish.mainWindow.webContents.send('export-terminology-all'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Remove Projects', click: () => { Swordfish.mainWindow.webContents.send('remove-projects'); } },
+            { label: '移除项目', click: () => { Swordfish.mainWindow.webContents.send('remove-projects'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Project Statistics', click: () => { Swordfish.mainWindow.webContents.send('request-statistics'); } },
-            { label: 'Export HTML', accelerator: 'F5', click: () => { Swordfish.mainWindow.webContents.send('export-html'); } },
+            { label: '项目统计', click: () => { Swordfish.mainWindow.webContents.send('request-statistics'); } },
+            { label: '导出HTML', accelerator: 'F5', click: () => { Swordfish.mainWindow.webContents.send('export-html'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Import Project', click: () => { Swordfish.showImportXliff(); } },
-            { label: 'Export Project', click: () => { Swordfish.mainWindow.webContents.send('export-project'); } }
+            { label: '导入项目', click: () => { Swordfish.showImportXliff(); } },
+            { label: '导出项目', click: () => { Swordfish.mainWindow.webContents.send('export-project'); } }
         ]);
         let memoriesMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Add Memory', click: () => { Swordfish.showAddMemory(); } },
-            { label: 'Remove Memory', click: () => { Swordfish.removeMemory(); } },
+            { label: '添加记忆库', click: () => { Swordfish.showAddMemory(); } },
+            { label: '移除记忆库', click: () => { Swordfish.removeMemory(); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Add RemoteTM Memory', click: () => { Swordfish.showServerSettings('memory'); } },
+            { label: '添加远程TM记忆库', click: () => { Swordfish.showServerSettings('memory'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Concordance Search', accelerator: 'CmdOrCtrl+Y', click: () => { Swordfish.mainWindow.webContents.send('concordance-requested'); } },
+            { label: '进行术语库搜索', accelerator: 'CmdOrCtrl+Y', click: () => { Swordfish.mainWindow.webContents.send('concordance-requested'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Import TMX File', click: () => { Swordfish.mainWindow.webContents.send('import-tmx'); } },
-            { label: 'Export Memory as TMX File', click: () => { Swordfish.mainWindow.webContents.send('export-tmx'); } }
+            { label: '导入TMX文件', click: () => { Swordfish.mainWindow.webContents.send('import-tmx'); } },
+            { label: '导出记忆库为TMX文件', click: () => { Swordfish.mainWindow.webContents.send('export-tmx'); } }
         ]);
         let glossariesMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Add Glossary', click: () => { Swordfish.showAddGlossary(); } },
-            { label: 'Remove Glossary', click: () => { Swordfish.removeGlossary(); } },
+            { label: '添加术语库', click: () => { Swordfish.showAddGlossary(); } },
+            { label: '移除术语库', click: () => { Swordfish.removeGlossary(); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Add RemoteTM Glossary', click: () => { Swordfish.showServerSettings('glossary'); } },
+            { label: '添加远程TM术语库', click: () => { Swordfish.showServerSettings('glossary'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Search Term in Glossary', accelerator: 'CmdOrCtrl+D', click: () => { Swordfish.mainWindow.webContents.send('term-search-requested'); } },
-            { label: 'Add Term to Glossary', accelerator: 'CmdOrCtrl+B', click: () => { Swordfish.mainWindow.webContents.send('add-term-requested'); } },
+            { label: '在术语库中搜索术语', accelerator: 'CmdOrCtrl+D', click: () => { Swordfish.mainWindow.webContents.send('term-search-requested'); } },
+            { label: '添加术语到术语库', accelerator: 'CmdOrCtrl+B', click: () => { Swordfish.mainWindow.webContents.send('add-term-requested'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Search on IATE', accelerator: 'CmdOrCtrl+Alt+I', click: () => { Swordfish.showIatePlugin(); } },
+            { label: '在IATE上搜索', accelerator: 'CmdOrCtrl+Alt+I', click: () => { Swordfish.showIatePlugin(); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Import Glossary', click: () => { Swordfish.mainWindow.webContents.send('import-glossary'); } },
-            { label: 'Export Glossary', click: () => { Swordfish.mainWindow.webContents.send('export-glossary'); } }
+            { label: '导入术语库', click: () => { Swordfish.mainWindow.webContents.send('import-glossary'); } },
+            { label: '导出术语库', click: () => { Swordfish.mainWindow.webContents.send('export-glossary'); } }
         ]);
         let aiMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Fix Tags with AI', accelerator: 'CmdOrCtrl+Shift+Alt+T', click: () => { Swordfish.mainWindow.webContents.send('fix-tags'); } },
-            { label: 'Fix TM Match with AI', accelerator: 'CmdOrCtrl+Shift+M', click: () => { Swordfish.mainWindow.webContents.send('fix-selected-match'); } },
+            { label: '使用AI修复标签', accelerator: 'CmdOrCtrl+Shift+Alt+T', click: () => { Swordfish.mainWindow.webContents.send('fix-tags'); } },
+            { label: '使用AI修复TM匹配', accelerator: 'CmdOrCtrl+Shift+M', click: () => { Swordfish.mainWindow.webContents.send('fix-selected-match'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Open AI Prompt Dialog', accelerator: 'CmdOrCtrl+Shift+P', click: () => { Swordfish.mainWindow.webContents.send('open-ai-prompt'); } },
-            { label: 'Copy AI Prompt to Clipboard', accelerator: 'CmdOrCtrl+Shift+C', click: () => { Swordfish.mainWindow.webContents.send('copy-ai-prompt'); } },
+            { label: '打开AI提示对话框', accelerator: 'CmdOrCtrl+Shift+P', click: () => { Swordfish.mainWindow.webContents.send('open-ai-prompt'); } },
+            { label: '将AI提示复制到剪贴板', accelerator: 'CmdOrCtrl+Shift+C', click: () => { Swordfish.mainWindow.webContents.send('copy-ai-prompt'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Insert AI Response in Segment', accelerator: 'CmdOrCtrl+Shift+R', click: () => { Swordfish.insertAiResponse(); } }
+            { label: '在片段中插入AI响应', accelerator: 'CmdOrCtrl+Shift+R', click: () => { Swordfish.insertAiResponse(); } }
         ]);
         let helpMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Swordfish User Guide', accelerator: 'F1', click: () => { this.showHelp(); } },
-            { label: 'Getting Started Guide', click: () => { Swordfish.showGettingStarted(); } },
+            { label: 'Swordfish用户指南', accelerator: 'F1', click: () => { this.showHelp(); } },
+            { label: '入门指南', click: () => { Swordfish.showGettingStarted(); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Check for Updates...', click: () => { this.checkUpdates(false); } },
-            { label: 'View Licenses', click: () => { this.showLicenses({ from: 'menu' }); } },
+            { label: '检查更新...', click: () => { this.checkUpdates(false); } },
+            { label: '查看许可证', click: () => { this.showLicenses({ from: 'menu' }); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Release History', click: () => { Swordfish.showReleaseHistory(); } },
-            { label: 'Support Group', click: () => { this.showSupportGroup(); } }
+            { label: '发布历史', click: () => { Swordfish.showReleaseHistory(); } },
+            { label: '支持小组', click: () => { this.showSupportGroup(); } }
         ]);
         let nextUntranslatedKey = 'Alt+Down';
         let nextUnconfirmedKey = 'Alt+Shift+Down';
@@ -1166,112 +1166,112 @@ export class Swordfish {
             nextUnconfirmedKey = 'Ctrl+Shift+Down';
         }
         let termsMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Insert  Term "1"', accelerator: 'CmdOrCtrl+Alt+1', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 1 }); } },
-            { label: 'Insert  Term "2"', accelerator: 'CmdOrCtrl+Alt+2', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 2 }); } },
-            { label: 'Insert  Term "3"', accelerator: 'CmdOrCtrl+Alt+3', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 3 }); } },
-            { label: 'Insert  Term "4"', accelerator: 'CmdOrCtrl+Alt+4', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 4 }); } },
-            { label: 'Insert  Term "5"', accelerator: 'CmdOrCtrl+Alt+5', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 5 }); } },
-            { label: 'Insert  Term "6"', accelerator: 'CmdOrCtrl+Alt+6', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 6 }); } },
-            { label: 'Insert  Term "7"', accelerator: 'CmdOrCtrl+Alt+7', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 7 }); } },
-            { label: 'Insert  Term "8"', accelerator: 'CmdOrCtrl+Alt+8', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 8 }); } },
-            { label: 'Insert  Term "8"', accelerator: 'CmdOrCtrl+Alt+9', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 9 }); } },
-            { label: 'Insert  Term "10"', accelerator: 'CmdOrCtrl+Alt+0', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 10 }); } }
+            { label: '插入术语"1"', accelerator: 'CmdOrCtrl+Alt+1', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 1 }); } },
+            { label: '插入术语"2"', accelerator: 'CmdOrCtrl+Alt+2', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 2 }); } },
+            { label: '插入术语"3"', accelerator: 'CmdOrCtrl+Alt+3', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 3 }); } },
+            { label: '插入术语"4"', accelerator: 'CmdOrCtrl+Alt+4', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 4 }); } },
+            { label: '插入术语"5"', accelerator: 'CmdOrCtrl+Alt+5', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 5 }); } },
+            { label: '插入术语"6"', accelerator: 'CmdOrCtrl+Alt+6', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 6 }); } },
+            { label: '插入术语"7"', accelerator: 'CmdOrCtrl+Alt+7', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 7 }); } },
+            { label: '插入术语"8"', accelerator: 'CmdOrCtrl+Alt+8', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 8 }); } },
+            { label: '插入术语"9"', accelerator: 'CmdOrCtrl+Alt+9', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 9 }); } },
+            { label: '插入术语"10"', accelerator: 'CmdOrCtrl+Alt+0', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { term: 10 }); } }
         ]);
         let tasksMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Confirm Translation', accelerator: 'CmdOrCtrl+E', click: () => { Swordfish.mainWindow.webContents.send('save-edit', { confirm: true, next: 'none' }); } },
-            { label: 'Unconfirm Translation', accelerator: 'CmdOrCtrl+Shift+E', click: () => { Swordfish.mainWindow.webContents.send('save-edit', { confirm: false, next: 'none', unconfirm: true }); } },
-            { label: 'Confirm and go to Next Untranslated', accelerator: nextUntranslatedKey, click: () => { Swordfish.mainWindow.webContents.send('save-edit', { confirm: true, next: 'untranslated' }); } },
-            { label: 'Confirm and go to Next Unconfirmed', accelerator: nextUnconfirmedKey, click: () => { Swordfish.mainWindow.webContents.send('save-edit', { confirm: true, next: 'unconfirmed' }); } },
+            { label: '确认翻译', accelerator: 'CmdOrCtrl+E', click: () => { Swordfish.mainWindow.webContents.send('save-edit', { confirm: true, next: 'none' }); } },
+            { label: '取消确认翻译', accelerator: 'CmdOrCtrl+Shift+E', click: () => { Swordfish.mainWindow.webContents.send('save-edit', { confirm: false, next: 'none', unconfirm: true }); } },
+            { label: '确认并跳转到下一个未翻译', accelerator: nextUntranslatedKey, click: () => { Swordfish.mainWindow.webContents.send('save-edit', { confirm: true, next: 'untranslated' }); } },
+            { label: '确认并跳转到下一个未确认', accelerator: nextUnconfirmedKey, click: () => { Swordfish.mainWindow.webContents.send('save-edit', { confirm: true, next: 'unconfirmed' }); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Confirm All Translations', click: () => { Swordfish.mainWindow.webContents.send('confirm-all'); } },
-            { label: 'Unconfirm All Translations', click: () => { Swordfish.mainWindow.webContents.send('unconfirm-all'); } },
-            { label: 'Remove All Translations', click: () => { Swordfish.mainWindow.webContents.send('remove-all'); } },
+            { label: '确认所有翻译', click: () => { Swordfish.mainWindow.webContents.send('confirm-all'); } },
+            { label: '取消确认所有翻译', click: () => { Swordfish.mainWindow.webContents.send('unconfirm-all'); } },
+            { label: '移除所有翻译', click: () => { Swordfish.mainWindow.webContents.send('remove-all'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Lock/Unlock Segment', accelerator: 'F4', click: () => { Swordfish.mainWindow.webContents.send('toggle-lock'); } },
-            { label: 'Lock Repeated Segments', click: () => { Swordfish.mainWindow.webContents.send('lock-repeated'); } },
-            { label: 'Unlock All Segments', click: () => { Swordfish.mainWindow.webContents.send('unlock-segments'); } },
+            { label: '锁定/解锁片段', accelerator: 'F4', click: () => { Swordfish.mainWindow.webContents.send('toggle-lock'); } },
+            { label: '锁定重复片段', click: () => { Swordfish.mainWindow.webContents.send('lock-repeated'); } },
+            { label: '解锁所有片段', click: () => { Swordfish.mainWindow.webContents.send('unlock-segments'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Copy Source to Target', accelerator: 'CmdOrCtrl+P', click: () => { Swordfish.mainWindow.webContents.send('copy-source'); } },
-            { label: 'Copy Sources to All Empty Targets', accelerator: 'CmdOrCtrl+Shift+P', click: () => { Swordfish.mainWindow.webContents.send('copy-all-sources'); } },
-            { label: 'Pseudo-translate Untranslated Segments', click: () => { Swordfish.mainWindow.webContents.send('pseudo-translate'); } },
+            { label: '复制源文本到目标文本', accelerator: 'CmdOrCtrl+P', click: () => { Swordfish.mainWindow.webContents.send('copy-source'); } },
+            { label: '将源文本复制到所有空目标文本', accelerator: 'CmdOrCtrl+Shift+P', click: () => { Swordfish.mainWindow.webContents.send('copy-all-sources'); } },
+            { label: '伪翻译未翻译片段', click: () => { Swordfish.mainWindow.webContents.send('pseudo-translate'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Get Translations from Memory', accelerator: 'CmdOrCtrl+M', click: () => { Swordfish.mainWindow.webContents.send('get-tm-matches'); } },
-            { label: 'Accept Translation Memory Match', accelerator: 'CmdOrCtrl+Alt+M', click: () => { Swordfish.mainWindow.webContents.send('accept-tm-match'); } },
-            { label: 'Apply Translation Memory to All Segments', click: () => { Swordfish.mainWindow.webContents.send('apply-tm-all'); } },
-            { label: 'Accept All 100% Matches', click: () => { Swordfish.mainWindow.webContents.send('accept-all-matches'); } },
-            { label: 'Remove All Translation Memory Matches', click: () => { Swordfish.mainWindow.webContents.send('remove-matches'); } },
+            { label: '从记忆库获取翻译', accelerator: 'CmdOrCtrl+M', click: () => { Swordfish.mainWindow.webContents.send('get-tm-matches'); } },
+            { label: '接受记忆库翻译匹配', accelerator: 'CmdOrCtrl+Alt+M', click: () => { Swordfish.mainWindow.webContents.send('accept-tm-match'); } },
+            { label: '将记忆库翻译应用到所有片段', click: () => { Swordfish.mainWindow.webContents.send('apply-tm-all'); } },
+            { label: '接受所有100%匹配', click: () => { Swordfish.mainWindow.webContents.send('accept-all-matches'); } },
+            { label: '移除所有记忆库翻译匹配', click: () => { Swordfish.mainWindow.webContents.send('remove-matches'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Get Machine Translations', accelerator: 'CmdOrCtrl+L', click: () => { Swordfish.mainWindow.webContents.send('get-mt-matches'); } },
-            { label: 'Accept Machine Translation', accelerator: 'CmdOrCtrl+Alt+L', click: () => { Swordfish.mainWindow.webContents.send('accept-mt-match'); } },
-            { label: 'Apply Machine Translation to All Segments', click: () => { Swordfish.mainWindow.webContents.send('apply-mt-all'); } },
-            { label: 'Accept All Machine Translations', click: () => { Swordfish.mainWindow.webContents.send('accept-all-mt'); } },
-            { label: 'Remove All Machine Translations', click: () => { Swordfish.mainWindow.webContents.send('remove-mt-all'); } },
+            { label: '获取机器翻译', accelerator: 'CmdOrCtrl+L', click: () => { Swordfish.mainWindow.webContents.send('get-mt-matches'); } },
+            { label: '接受机器翻译', accelerator: 'CmdOrCtrl+Alt+L', click: () => { Swordfish.mainWindow.webContents.send('accept-mt-match'); } },
+            { label: '将机器翻译应用到所有片段', click: () => { Swordfish.mainWindow.webContents.send('apply-mt-all'); } },
+            { label: '接受所有机器翻译', click: () => { Swordfish.mainWindow.webContents.send('accept-all-mt'); } },
+            { label: '移除所有机器翻译', click: () => { Swordfish.mainWindow.webContents.send('remove-mt-all'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Get Auto-Translations', accelerator: 'CmdOrCtrl+R', click: () => { Swordfish.mainWindow.webContents.send('get-am-matches'); } },
-            { label: 'Apply Auto-Translation to All Segments', click: () => { Swordfish.mainWindow.webContents.send('apply-am-all'); } },
-            { label: 'Remove All Auto-Translations', click: () => { Swordfish.mainWindow.webContents.send('remove-am-all'); } },
+            { label: '获取自动翻译', accelerator: 'CmdOrCtrl+R', click: () => { Swordfish.mainWindow.webContents.send('get-am-matches'); } },
+            { label: '将自动翻译应用到所有片段', click: () => { Swordfish.mainWindow.webContents.send('apply-am-all'); } },
+            { label: '移除所有自动翻译', click: () => { Swordfish.mainWindow.webContents.send('remove-am-all'); } },
             new MenuItem({ type: 'separator' }),
-            { label: 'Get Glossary Terms', accelerator: 'CmdOrCtrl+K', click: () => { Swordfish.mainWindow.webContents.send('apply-terminology'); } },
-            { label: 'Insert Selected Term', accelerator: 'CmdOrCtrl+Alt+K', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { selected: true }); } },
-            { label: 'Select Previous Term', accelerator: 'CmdOrCtrl+Alt+Up', click: () => { Swordfish.mainWindow.webContents.send('select-previous-term'); } },
-            { label: 'Select Next Term', accelerator: 'CmdOrCtrl+Alt+Down', click: () => { Swordfish.mainWindow.webContents.send('select-next-term'); } },
-            new MenuItem({ label: 'Insert Term...', submenu: termsMenu }),
-            { label: 'Get Terms for All Segments', click: () => { Swordfish.mainWindow.webContents.send('apply-terminology-all'); } }
+            { label: '获取术语库术语', accelerator: 'CmdOrCtrl+K', click: () => { Swordfish.mainWindow.webContents.send('apply-terminology'); } },
+            { label: '插入选定术语', accelerator: 'CmdOrCtrl+Alt+K', click: () => { Swordfish.mainWindow.webContents.send('insert-tem', { selected: true }); } },
+            { label: '选择上一个术语', accelerator: 'CmdOrCtrl+Alt+Up', click: () => { Swordfish.mainWindow.webContents.send('select-previous-term'); } },
+            { label: '选择下一个术语', accelerator: 'CmdOrCtrl+Alt+Down', click: () => { Swordfish.mainWindow.webContents.send('select-next-term'); } },
+            new MenuItem({ label: '插入术语...', submenu: termsMenu }),
+            { label: '获取所有片段的术语', click: () => { Swordfish.mainWindow.webContents.send('apply-terminology-all'); } }
         ]);
         let qaMenu: Menu = Menu.buildFromTemplate([
-            { label: 'Check Inline Tags', accelerator: 'F9', click: () => { Swordfish.mainWindow.webContents.send('tags-analysis'); } },
-            { label: 'Check Initial/Trailing Spaces', accelerator: 'F10', click: () => { Swordfish.mainWindow.webContents.send('spaces-analysis'); } }
+            { label: '检查内联标签', accelerator: 'F9', click: () => { Swordfish.mainWindow.webContents.send('tags-analysis'); } },
+            { label: '检查初始/尾随空格', accelerator: 'F10', click: () => { Swordfish.mainWindow.webContents.send('spaces-analysis'); } }
         ]);
         let template: MenuItem[] = [
-            new MenuItem({ label: '&File', role: 'fileMenu', submenu: fileMenu }),
-            new MenuItem({ label: '&Edit', role: 'editMenu', submenu: editMenu }),
-            new MenuItem({ label: '&View', role: 'viewMenu', submenu: viewMenu }),
-            new MenuItem({ label: '&Projects', submenu: projectsMenu }),
-            new MenuItem({ label: '&Memories', submenu: memoriesMenu }),
-            new MenuItem({ label: '&Glossaries', submenu: glossariesMenu }),
-            new MenuItem({ label: '&Tasks', submenu: tasksMenu }),
-            new MenuItem({ label: '&QA', submenu: qaMenu }),
-            new MenuItem({ label: '&AI', submenu: aiMenu }),
-            new MenuItem({ label: '&Help', role: 'help', submenu: helpMenu })
+            new MenuItem({ label: '文件', role: 'fileMenu', submenu: fileMenu }),
+            new MenuItem({ label: '编辑', role: 'editMenu', submenu: editMenu }),
+            new MenuItem({ label: '视图', role: 'viewMenu', submenu: viewMenu }),
+            new MenuItem({ label: '项目', submenu: projectsMenu }),
+            new MenuItem({ label: '记忆库', submenu: memoriesMenu }),
+            new MenuItem({ label: '术语库', submenu: glossariesMenu }),
+            new MenuItem({ label: '任务', submenu: tasksMenu }),
+            new MenuItem({ label: '质量检查', submenu: qaMenu }),
+            new MenuItem({ label: 'AI', submenu: aiMenu }),
+            new MenuItem({ label: '帮助', role: 'help', submenu: helpMenu })
         ];
         if (process.platform === 'darwin') {
             let appleMenu: Menu = Menu.buildFromTemplate([
-                new MenuItem({ label: 'About...', click: () => { this.showAbout(); } }),
+                new MenuItem({ label: '关于...', click: () => { this.showAbout(); } }),
                 new MenuItem({
-                    label: 'Preferences...', submenu: [
-                        { label: 'Settings', accelerator: 'Cmd+,', click: () => { this.showPreferences(); } }
+                    label: '偏好设置...', submenu: [
+                        { label: '设置', accelerator: 'Cmd+,', click: () => { this.showPreferences(); } }
                     ]
                 }),
                 new MenuItem({ type: 'separator' }),
                 new MenuItem({
-                    label: 'Services', role: 'services', submenu: [
-                        { label: 'No Services Apply', enabled: false }
+                    label: '服务', role: 'services', submenu: [
+                        { label: '无服务适用', enabled: false }
                     ]
                 }),
                 new MenuItem({ type: 'separator' }),
-                new MenuItem({ label: 'Quit Swordfish', accelerator: 'Cmd+Q', role: 'quit', click: () => { app.quit(); } })
+                new MenuItem({ label: '退出Swordfish', accelerator: 'Cmd+Q', role: 'quit', click: () => { app.quit(); } })
             ]);
             template.unshift(new MenuItem({ label: 'Swordfish', role: 'appMenu', submenu: appleMenu }));
         } else {
             let help: MenuItem = template.pop() as MenuItem;
             template.push(new MenuItem({
-                label: '&Settings', submenu: [
-                    { label: 'Preferences', click: () => { this.showPreferences(); } }
+                label: '设置', submenu: [
+                    { label: '偏好设置', click: () => { this.showPreferences(); } }
                 ]
             }));
             template.push(help);
         }
         if (process.platform === 'win32') {
             fileMenu.append(new MenuItem({ type: 'separator' }));
-            fileMenu.append(new MenuItem({ label: 'Exit', accelerator: 'Alt+F4', role: 'quit', click: () => { app.quit(); } }));
+            fileMenu.append(new MenuItem({ label: '退出', accelerator: 'Alt+F4', role: 'quit', click: () => { app.quit(); } }));
             helpMenu.append(new MenuItem({ type: 'separator' }));
-            helpMenu.append(new MenuItem({ label: 'About...', click: () => { this.showAbout(); } }));
+            helpMenu.append(new MenuItem({ label: '关于...', click: () => { this.showAbout(); } }));
         }
         if (process.platform === 'linux') {
             fileMenu.append(new MenuItem({ type: 'separator' }));
-            fileMenu.append(new MenuItem({ label: 'Quit', accelerator: 'Ctrl+Q', role: 'quit', click: () => { app.quit(); } }));
+            fileMenu.append(new MenuItem({ label: '退出', accelerator: 'Ctrl+Q', role: 'quit', click: () => { app.quit(); } }));
             helpMenu.append(new MenuItem({ type: 'separator' }));
-            helpMenu.append(new MenuItem({ label: 'About...', click: () => { this.showAbout(); } }));
+            helpMenu.append(new MenuItem({ label: '关于...', click: () => { this.showAbout(); } }));
         }
         Menu.setApplicationMenu(Menu.buildFromTemplate(template));
     }
