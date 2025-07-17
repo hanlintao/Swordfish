@@ -130,7 +130,28 @@ export class Swordfish {
         },
         os: process.platform,
         showGuide: true,
-        pageRows: 500
+        pageRows: 500,
+        deepseek: {
+            enabled: false,
+            apiKey: '',
+            model: 'deepseek-chat'
+        },
+        kimi: {
+            enabled: false,
+            apiKey: '',
+            model: 'moonshot-v1-8k'
+        },
+        ollama: {
+            enabled: false,
+            apiKey: '',
+            model: 'llama3.2',
+            baseURL: 'http://localhost:11434'
+        },
+        doubao: {
+            enabled: false,
+            apiKey: '',
+            model: 'your-doubao-model-id'
+        },
     }
 
     static currentCss: string;
@@ -830,9 +851,6 @@ export class Swordfish {
         });
         ipcMain.on('show-notes', (event: IpcMainEvent, arg: any) => {
             Swordfish.showNotes(arg);
-        });
-        ipcMain.on('close-notes', () => {
-            Swordfish.notesWindow.close();
         });
         ipcMain.on('get-initial-notes', (event: IpcMainEvent) => {
             Swordfish.notesEvent = event;
@@ -5467,9 +5485,9 @@ export class Swordfish {
     }
 
     static toggleNotes(): void {
-        if (Swordfish.notesWindow && !Swordfish.notesWindow.isDestroyed()) {
+        if (Swordfish.notesWindow) {
             Swordfish.notesWindow.close();
-            Swordfish.mainWindow?.webContents.send('notes-closed');
+            Swordfish.mainWindow.webContents.send('notes-closed');
             Swordfish.notesParam = undefined;
             return;
         }
@@ -5477,7 +5495,7 @@ export class Swordfish {
     }
 
     static showNotes(arg: any): void {
-        if (!Swordfish.notesWindow || Swordfish.notesWindow.isDestroyed()) {
+        if (!Swordfish.notesWindow) {
             Swordfish.notesWindow = new BrowserWindow({
                 parent: Swordfish.mainWindow,
                 width: 450,
@@ -5499,16 +5517,14 @@ export class Swordfish {
             let fileUrl: URL = new URL('file://' + filePath);
             Swordfish.notesWindow.loadURL(fileUrl.href);
             Swordfish.notesWindow.addListener('closed', () => {
-                try {
-                    Swordfish.mainWindow.webContents.send('notes-closed');
-                } catch (e) {
-                    // ignore
-                }
+                Swordfish.mainWindow.webContents.send('notes-closed');
             });
             Swordfish.notesWindow.once('ready-to-show', () => {
                 Swordfish.notesWindow.show();
             });
-            Swordfish.setLocation(this.notesWindow, 'notes.html');
+            this.notesWindow.on('close', () => {
+                this.mainWindow.focus();
+            });
             return;
         }
         Swordfish.getNotes(arg);

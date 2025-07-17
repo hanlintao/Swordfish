@@ -15,6 +15,10 @@ import { Language, LanguageUtils } from "typesbcp47";
 import { SAXParser, XMLElement } from "typesxml";
 import { MTContentHandler } from "./mtContentHandler";
 import { Swordfish } from "./Swordfish";
+import { DeepSeekTranslator } from "./DeepSeekTranslator";
+import { KimiTranslator } from "./KimiTranslator";
+import { OllamaTranslator } from "./OllamaTranslator";
+import { DoubaoTranslator } from "./DoubaoTranslator";
 
 export class MTManager {
 
@@ -89,6 +93,30 @@ export class MTManager {
             modernmtTranslator.setSourceLanguage(preferences.modernmt.srcLang);
             modernmtTranslator.setTargetLanguage(preferences.modernmt.tgtLang);
             this.mtEngines.push(modernmtTranslator);
+        }
+        if (preferences.deepseek && preferences.deepseek.enabled) {
+            let deepseekTranslator = new DeepSeekTranslator(preferences.deepseek.apiKey, preferences.deepseek.model);
+            deepseekTranslator.setSourceLanguage(srcLang);
+            deepseekTranslator.setTargetLanguage(tgtLang);
+            this.mtEngines.push(deepseekTranslator);
+        }
+        if (preferences.kimi && preferences.kimi.enabled) {
+            let kimiTranslator = new KimiTranslator(preferences.kimi.apiKey, preferences.kimi.model);
+            kimiTranslator.setSourceLanguage(srcLang);
+            kimiTranslator.setTargetLanguage(tgtLang);
+            this.mtEngines.push(kimiTranslator);
+        }
+        if (preferences.ollama && preferences.ollama.enabled) {
+            let ollamaTranslator = new OllamaTranslator(preferences.ollama.apiKey, preferences.ollama.model, preferences.ollama.baseURL);
+            ollamaTranslator.setSourceLanguage(srcLang);
+            ollamaTranslator.setTargetLanguage(tgtLang);
+            this.mtEngines.push(ollamaTranslator);
+        }
+        if (preferences.doubao && preferences.doubao.enabled) {
+            let doubaoTranslator = new DoubaoTranslator(preferences.doubao.apiKey, preferences.doubao.model);
+            doubaoTranslator.setSourceLanguage(srcLang);
+            doubaoTranslator.setTargetLanguage(tgtLang);
+            this.mtEngines.push(doubaoTranslator);
         }
     }
 

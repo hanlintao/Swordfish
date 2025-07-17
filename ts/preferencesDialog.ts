@@ -78,6 +78,23 @@ class PreferencesDialog {
     filtersTable: HTMLTableElement = document.createElement('table');
     selected: Map<string, string>;
 
+    enableDeepSeek: HTMLInputElement = document.createElement('input');
+    deepseekKey: HTMLInputElement = document.createElement('input');
+    deepseekModel: HTMLSelectElement = document.createElement('select');
+
+    enableKimi: HTMLInputElement = document.createElement('input');
+    kimiKey: HTMLInputElement = document.createElement('input');
+    kimiModel: HTMLSelectElement = document.createElement('select');
+
+    enableOllama: HTMLInputElement = document.createElement('input');
+    ollamaKey: HTMLInputElement = document.createElement('input');
+    ollamaModel: HTMLSelectElement = document.createElement('select');
+    ollamaBaseURL: HTMLInputElement = document.createElement('input');
+
+    enableDoubao: HTMLInputElement = document.createElement('input');
+    doubaoKey: HTMLInputElement = document.createElement('input');
+    doubaoModel: HTMLInputElement = document.createElement('input');
+
     constructor() {
 
         document.body.classList.add("wait");
@@ -284,6 +301,49 @@ class PreferencesDialog {
         this.pageRows.value = preferences.pageRows.toString();
         this.populateSpellcheckTab(this.spellcheckTab.getContainer(), preferences.spellchecker);
 
+        this.enableDeepSeek.checked = preferences.deepseek.enabled;
+        this.deepseekKey.value = preferences.deepseek.apiKey;
+        this.deepseekModel.value = preferences.deepseek.model;
+        this.deepseekKey.disabled = !preferences.deepseek.enabled;
+        this.deepseekModel.disabled = !preferences.deepseek.enabled;
+        this.enableDeepSeek.addEventListener('change', () => {
+            this.deepseekKey.disabled = !this.enableDeepSeek.checked;
+            this.deepseekModel.disabled = !this.enableDeepSeek.checked;
+        });
+
+        this.enableKimi.checked = preferences.kimi.enabled;
+        this.kimiKey.value = preferences.kimi.apiKey;
+        this.kimiModel.value = preferences.kimi.model;
+        this.kimiKey.disabled = !preferences.kimi.enabled;
+        this.kimiModel.disabled = !preferences.kimi.enabled;
+        this.enableKimi.addEventListener('change', () => {
+            this.kimiKey.disabled = !this.enableKimi.checked;
+            this.kimiModel.disabled = !this.enableKimi.checked;
+        });
+
+        this.enableOllama.checked = preferences.ollama.enabled;
+        this.ollamaKey.value = preferences.ollama.apiKey;
+        this.ollamaModel.value = preferences.ollama.model;
+        this.ollamaBaseURL.value = preferences.ollama.baseURL;
+        this.ollamaKey.disabled = !preferences.ollama.enabled;
+        this.ollamaModel.disabled = !preferences.ollama.enabled;
+        this.ollamaBaseURL.disabled = !preferences.ollama.enabled;
+        this.enableOllama.addEventListener('change', () => {
+            this.ollamaKey.disabled = !this.enableOllama.checked;
+            this.ollamaModel.disabled = !this.enableOllama.checked;
+            this.ollamaBaseURL.disabled = !this.enableOllama.checked;
+        });
+
+        this.enableDoubao.checked = preferences.doubao.enabled;
+        this.doubaoKey.value = preferences.doubao.apiKey;
+        this.doubaoModel.value = preferences.doubao.model;
+        this.doubaoKey.disabled = !preferences.doubao.enabled;
+        this.doubaoModel.disabled = !preferences.doubao.enabled;
+        this.enableDoubao.addEventListener('change', () => {
+            this.doubaoKey.disabled = !this.enableDoubao.checked;
+            this.doubaoModel.disabled = !this.enableDoubao.checked;
+        });
+
         this.electron.ipcRenderer.send('preferences-set');
     }
 
@@ -405,7 +465,28 @@ class PreferencesDialog {
             },
             os: this.os,
             showGuide: this.showGuide,
-            pageRows: this.pageRows.valueAsNumber
+            pageRows: this.pageRows.valueAsNumber,
+            deepseek: {
+                enabled: this.enableDeepSeek.checked,
+                apiKey: this.deepseekKey.value,
+                model: this.deepseekModel.value
+            },
+            kimi: {
+                enabled: this.enableKimi.checked,
+                apiKey: this.kimiKey.value,
+                model: this.kimiModel.value
+            },
+            ollama: {
+                enabled: this.enableOllama.checked,
+                apiKey: this.ollamaKey.value,
+                model: this.ollamaModel.value,
+                baseURL: this.ollamaBaseURL.value
+            },
+            doubao: {
+                enabled: this.enableDoubao.checked,
+                apiKey: this.doubaoKey.value,
+                model: this.doubaoModel.value
+            }
         }
         if (this.os !== 'darwin') {
             prefs.spellchecker = {
@@ -1020,7 +1101,7 @@ class PreferencesDialog {
         mtHolder.addTab(googleTab);
         this.populateGoogleTab(googleTab.getContainer());
 
-        let azureTab: Tab = new Tab('azureTab', 'Microsoft Azure', false, mtHolder);
+        let azureTab: Tab = new Tab('azureTab', 'Azure', false, mtHolder);
         azureTab.getLabelDiv().addEventListener('click', () => {
             setTimeout(() => {
                 this.electron.ipcRenderer.send('set-height', { window: 'preferences', width: PreferencesDialog.defaultWidth, height: document.body.clientHeight });
@@ -1038,7 +1119,7 @@ class PreferencesDialog {
         mtHolder.addTab(deeplTab);
         this.populateDeeplTab(deeplTab.getContainer());
 
-        let chatGptTab: Tab = new Tab('chatGptTab', 'ChatGPT', false, mtHolder);
+        let chatGptTab: Tab = new Tab('chatGptTab', 'GPT', false, mtHolder);
         chatGptTab.getLabelDiv().addEventListener('click', () => {
             setTimeout(() => {
                 this.electron.ipcRenderer.send('set-height', { window: 'preferences', width: PreferencesDialog.defaultWidth, height: document.body.clientHeight });
@@ -1047,7 +1128,7 @@ class PreferencesDialog {
         mtHolder.addTab(chatGptTab);
         this.populateChatGptTab(chatGptTab.getContainer());
 
-        let anthropicTab: Tab = new Tab('anthropicTab', 'Anthropic', false, mtHolder);
+        let anthropicTab: Tab = new Tab('anthropicTab', 'Claude', false, mtHolder);
         anthropicTab.getLabelDiv().addEventListener('click', () => {
             setTimeout(() => {
                 this.electron.ipcRenderer.send('set-height', { window: 'preferences', width: PreferencesDialog.defaultWidth, height: document.body.clientHeight });
@@ -1056,7 +1137,7 @@ class PreferencesDialog {
         mtHolder.addTab(anthropicTab);
         this.populateAnthropicTab(anthropicTab.getContainer());
 
-        let modernmtTab: Tab = new Tab('modernmtTab', 'ModernMT', false, mtHolder);
+        let modernmtTab: Tab = new Tab('modernmtTab', 'Modern', false, mtHolder);
         modernmtTab.getLabelDiv().addEventListener('click', () => {
             setTimeout(() => {
                 this.electron.ipcRenderer.send('set-height', { window: 'preferences', width: PreferencesDialog.defaultWidth, height: document.body.clientHeight });
@@ -1064,6 +1145,22 @@ class PreferencesDialog {
         });
         mtHolder.addTab(modernmtTab);
         this.populateModernmtTab(modernmtTab.getContainer());
+
+        let kimiTab: Tab = new Tab('kimiTab', 'Kimi', false, mtHolder);
+        mtHolder.addTab(kimiTab);
+        this.populateKimiTab(kimiTab.getContainer());
+
+        let deepseekTab: Tab = new Tab('deepseekTab', 'DeepS', false, mtHolder);
+        mtHolder.addTab(deepseekTab);
+        this.populateDeepSeekTab(deepseekTab.getContainer());
+
+        let ollamaTab: Tab = new Tab('ollamaTab', 'Ollama', false, mtHolder);
+        mtHolder.addTab(ollamaTab);
+        this.populateOllamaTab(ollamaTab.getContainer());
+
+        let doubaoTab: Tab = new Tab('doubaoTab', 'Doubao', false, mtHolder);
+        mtHolder.addTab(doubaoTab);
+        this.populateDoubaoTab(doubaoTab.getContainer());
     }
 
     populateGoogleTab(container: HTMLDivElement): void {
@@ -1481,6 +1578,238 @@ class PreferencesDialog {
         this.modernmtTgtLang = document.getElementById('modernmtTgtLang') as HTMLSelectElement;
     }
 
+    populateKimiTab(container: HTMLDivElement): void {
+        container.style.paddingTop = '10px';
+
+        let kimiDiv: HTMLDivElement = document.createElement('div');
+        kimiDiv.classList.add('middle');
+        kimiDiv.classList.add('row');
+        kimiDiv.style.paddingLeft = '4px';
+        kimiDiv.innerHTML = '<input type="checkbox" id="enableKimi"><label for="enableKimi" style="padding-top:4px;">Enable Kimi Translation</label>';
+        container.appendChild(kimiDiv);
+
+        let table: HTMLTableElement = document.createElement('table');
+        table.classList.add('fill_width');
+        container.appendChild(table);
+
+        let tr: HTMLTableRowElement = document.createElement('tr');
+        table.appendChild(tr);
+
+        let td: HTMLTableCellElement = document.createElement('td');
+        td.classList.add('middle');
+        td.classList.add('noWrap');
+        td.innerHTML = '<label for="kimiKey">API Key</label>';
+        tr.appendChild(td);
+
+        let td2: HTMLTableCellElement = document.createElement('td');
+        td2.classList.add('middle');
+        td2.classList.add('fill_width');
+        td2.innerHTML = '<input type="text" id="kimiKey" class="table_input"/>';
+        tr.appendChild(td2);
+
+        tr = document.createElement('tr');
+        table.appendChild(tr);
+
+        let td3: HTMLTableCellElement = document.createElement('td');
+        td3.classList.add('middle');
+        td3.classList.add('noWrap');
+        td3.innerHTML = '<label for="kimiModel">Model</label>';
+        tr.appendChild(td3);
+
+        let td4: HTMLTableCellElement = document.createElement('td');
+        td4.classList.add('middle');
+        td4.classList.add('fill_width');
+        td4.innerHTML = '<select id="kimiModel" class="table_select">' +
+            '<option value="moonshot-v1-8k">moonshot-v1-8k</option>' +
+            '<option value="moonshot-v1-32k">moonshot-v1-32k</option>' +
+            '<option value="moonshot-v1-128k">moonshot-v1-128k</option>' +
+            '</select>';
+        tr.appendChild(td4);
+
+        this.enableKimi = document.getElementById('enableKimi') as HTMLInputElement;
+        this.kimiKey = document.getElementById('kimiKey') as HTMLInputElement;
+        this.kimiModel = document.getElementById('kimiModel') as HTMLSelectElement;
+    }
+
+    populateDeepSeekTab(container: HTMLDivElement): void {
+        container.style.paddingTop = '10px';
+
+        let deepseekDiv: HTMLDivElement = document.createElement('div');
+        deepseekDiv.classList.add('middle');
+        deepseekDiv.classList.add('row');
+        deepseekDiv.style.paddingLeft = '4px';
+        deepseekDiv.innerHTML = '<input type="checkbox" id="enableDeepSeek"><label for="enableDeepSeek" style="padding-top:4px;">Enable DeepSeek Translation</label>';
+        container.appendChild(deepseekDiv);
+
+        let table: HTMLTableElement = document.createElement('table');
+        table.classList.add('fill_width');
+        container.appendChild(table);
+
+        let tr: HTMLTableRowElement = document.createElement('tr');
+        table.appendChild(tr);
+
+        let td: HTMLTableCellElement = document.createElement('td');
+        td.classList.add('middle');
+        td.classList.add('noWrap');
+        td.innerHTML = '<label for="deepseekKey">API Key</label>';
+        tr.appendChild(td);
+
+        let td2: HTMLTableCellElement = document.createElement('td');
+        td2.classList.add('middle');
+        td2.classList.add('fill_width');
+        td2.innerHTML = '<input type="text" id="deepseekKey" class="table_input"/>';
+        tr.appendChild(td2);
+
+        tr = document.createElement('tr');
+        table.appendChild(tr);
+
+        let td3: HTMLTableCellElement = document.createElement('td');
+        td3.classList.add('middle');
+        td3.classList.add('noWrap');
+        td3.innerHTML = '<label for="deepseekModel">Model</label>';
+        tr.appendChild(td3);
+
+        let td4: HTMLTableCellElement = document.createElement('td');
+        td4.classList.add('middle');
+        td4.classList.add('fill_width');
+        td4.innerHTML = '<select id="deepseekModel" class="table_select"><option value="deepseek-chat">deepseek-chat</option></select>';
+        tr.appendChild(td4);
+
+        this.enableDeepSeek = document.getElementById('enableDeepSeek') as HTMLInputElement;
+        this.deepseekKey = document.getElementById('deepseekKey') as HTMLInputElement;
+        this.deepseekModel = document.getElementById('deepseekModel') as HTMLSelectElement;
+    }
+
+    async populateOllamaTab(container: HTMLDivElement): Promise<void> {
+        container.style.paddingTop = '10px';
+
+        let ollamaDiv: HTMLDivElement = document.createElement('div');
+        ollamaDiv.classList.add('middle');
+        ollamaDiv.classList.add('row');
+        ollamaDiv.style.paddingLeft = '4px';
+        ollamaDiv.innerHTML = '<input type="checkbox" id="enableOllama"><label for="enableOllama" style="padding-top:4px;">Enable Ollama Translation</label>';
+        container.appendChild(ollamaDiv);
+
+        let table: HTMLTableElement = document.createElement('table');
+        table.classList.add('fill_width');
+        container.appendChild(table);
+
+        let tr: HTMLTableRowElement = document.createElement('tr');
+        table.appendChild(tr);
+
+        let td: HTMLTableCellElement = document.createElement('td');
+        td.classList.add('middle');
+        td.classList.add('noWrap');
+        td.innerHTML = '<label for="ollamaKey">API Key (Optional)</label>';
+        tr.appendChild(td);
+
+        let td2: HTMLTableCellElement = document.createElement('td');
+        td2.classList.add('middle');
+        td2.classList.add('fill_width');
+        td2.innerHTML = '<input type="text" id="ollamaKey" class="table_input"/>';
+        tr.appendChild(td2);
+
+        tr = document.createElement('tr');
+        table.appendChild(tr);
+
+        let td3: HTMLTableCellElement = document.createElement('td');
+        td3.classList.add('middle');
+        td3.classList.add('noWrap');
+        td3.innerHTML = '<label for="ollamaModel">Model</label>';
+        tr.appendChild(td3);
+
+        let td4: HTMLTableCellElement = document.createElement('td');
+        td4.classList.add('middle');
+        td4.classList.add('fill_width');
+        td4.innerHTML = '<select id="ollamaModel" class="table_select"></select>';
+        tr.appendChild(td4);
+
+        tr = document.createElement('tr');
+        table.appendChild(tr);
+
+        let td5: HTMLTableCellElement = document.createElement('td');
+        td5.classList.add('middle');
+        td5.classList.add('noWrap');
+        td5.innerHTML = '<label for="ollamaBaseURL">Base URL</label>';
+        tr.appendChild(td5);
+
+        let td6: HTMLTableCellElement = document.createElement('td');
+        td6.classList.add('middle');
+        td6.classList.add('fill_width');
+        td6.innerHTML = '<input type="text" id="ollamaBaseURL" class="table_input" value="http://localhost:11434"/>';
+        tr.appendChild(td6);
+
+        this.enableOllama = document.getElementById('enableOllama') as HTMLInputElement;
+        this.ollamaKey = document.getElementById('ollamaKey') as HTMLInputElement;
+        this.ollamaModel = document.getElementById('ollamaModel') as HTMLSelectElement;
+        this.ollamaBaseURL = document.getElementById('ollamaBaseURL') as HTMLInputElement;
+
+        // 动态加载模型列表
+        try {
+            const baseURL = this.ollamaBaseURL.value || 'http://localhost:11434';
+            const response = await fetch(`${baseURL}/api/tags`);
+            if (response.ok) {
+                const data = await response.json();
+                const models = data.models.map((model: any) => model.name);
+                
+                // 清空现有选项
+                this.ollamaModel.innerHTML = '';
+                
+                // 添加模型选项
+                models.forEach((model: string) => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.textContent = model;
+                    this.ollamaModel.appendChild(option);
+                });
+            } else {
+                // 如果获取失败，使用默认模型列表
+                const defaultModels = ["llama3.2", "llama3.1", "llama3", "llama2", "mistral", "codellama", "qwen2"];
+                defaultModels.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.textContent = model;
+                    this.ollamaModel.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Failed to load Ollama models:', error);
+            // 使用默认模型列表
+            const defaultModels = ["llama3.2", "llama3.1", "llama3", "llama2", "mistral", "codellama", "qwen2"];
+            defaultModels.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model;
+                option.textContent = model;
+                this.ollamaModel.appendChild(option);
+            });
+        }
+
+        // 监听 Base URL 变化，重新加载模型列表
+        this.ollamaBaseURL.addEventListener('change', async () => {
+            try {
+                const baseURL = this.ollamaBaseURL.value;
+                const response = await fetch(`${baseURL}/api/tags`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const models = data.models.map((model: any) => model.name);
+                    
+                    // 清空现有选项
+                    this.ollamaModel.innerHTML = '';
+                    
+                    // 添加模型选项
+                    models.forEach((model: string) => {
+                        const option = document.createElement('option');
+                        option.value = model;
+                        option.textContent = model;
+                        this.ollamaModel.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to reload Ollama models:', error);
+            }
+        });
+    }
+
     setMtLanguages(arg: any): void {
         this.googleSrcLang.innerHTML = this.getOptions(arg.google.srcLangs);
         this.googleTgtLang.innerHTML = this.getOptions(arg.google.tgtLangs);
@@ -1585,6 +1914,55 @@ class PreferencesDialog {
             selectedFiles.push(key);
         }
         this.electron.ipcRenderer.send('export-xmlFilters', { files: selectedFiles });
+    }
+
+    populateDoubaoTab(container: HTMLDivElement): void {
+        container.style.paddingTop = '10px';
+
+        let doubaoDiv: HTMLDivElement = document.createElement('div');
+        doubaoDiv.classList.add('middle');
+        doubaoDiv.classList.add('row');
+        doubaoDiv.style.paddingLeft = '4px';
+        doubaoDiv.innerHTML = '<input type="checkbox" id="enableDoubao"><label for="enableDoubao" style="padding-top:4px;">Enable Doubao Translation</label>';
+        container.appendChild(doubaoDiv);
+
+        let table: HTMLTableElement = document.createElement('table');
+        table.classList.add('fill_width');
+        container.appendChild(table);
+
+        let tr: HTMLTableRowElement = document.createElement('tr');
+        table.appendChild(tr);
+
+        let td: HTMLTableCellElement = document.createElement('td');
+        td.classList.add('middle');
+        td.classList.add('noWrap');
+        td.innerHTML = '<label for="doubaoKey">API Key</label>';
+        tr.appendChild(td);
+
+        let td2: HTMLTableCellElement = document.createElement('td');
+        td2.classList.add('middle');
+        td2.classList.add('fill_width');
+        td2.innerHTML = '<input type="text" id="doubaoKey" class="table_input"/>';
+        tr.appendChild(td2);
+
+        tr = document.createElement('tr');
+        table.appendChild(tr);
+
+        let td3: HTMLTableCellElement = document.createElement('td');
+        td3.classList.add('middle');
+        td3.classList.add('noWrap');
+        td3.innerHTML = '<label for="doubaoModel">Model</label>';
+        tr.appendChild(td3);
+
+        let td4: HTMLTableCellElement = document.createElement('td');
+        td4.classList.add('middle');
+        td4.classList.add('fill_width');
+        td4.innerHTML = '<input type="text" id="doubaoModel" class="table_input" value="your-doubao-model-id"/>';
+        tr.appendChild(td4);
+
+        this.enableDoubao = document.getElementById('enableDoubao') as HTMLInputElement;
+        this.doubaoKey = document.getElementById('doubaoKey') as HTMLInputElement;
+        this.doubaoModel = document.getElementById('doubaoModel') as HTMLInputElement;
     }
 }
 

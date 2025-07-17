@@ -70,4 +70,25 @@ interface Preferences {
     os: string;
     showGuide: boolean;
     pageRows: number;
+    deepseek: {
+        enabled: boolean;
+        apiKey: string;
+        model: string;
+    };
+    kimi: {
+        enabled: boolean;
+        apiKey: string;
+        model: string;
+    };
+    ollama: {
+        enabled: boolean;
+        apiKey: string;
+        model: string;
+        baseURL: string;
+    };
+    doubao: {
+        enabled: boolean;
+        apiKey: string;
+        model: string;
+    };
 }
