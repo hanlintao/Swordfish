@@ -65,7 +65,7 @@ Windows 签名启动器及安装包 | 否 | 是
 ### 构建步骤示例
 
 ``` bash
-  git clone https://github.com/rmraya/Swordfish.git
+  git clone https://github.com/hanlintao/Swordfish
   cd Swordfish
   ant
   npm install
