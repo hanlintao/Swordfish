@@ -2,67 +2,67 @@
 
 ![Swordfish logo](icons/icon.png)
 
-An advanced CAT (Computer Aided Translation) tool based on XLIFF Standard that supports MS Office, DITA, HTML and other document formats.
+一款基于 XLIFF 标准的高级计算机辅助翻译（CAT）工具，支持 MS Office、DITA、HTML 及其他文档格式。
 
-Swordfish uses TM (Translation Memory) and MT (Machine Translation). Supports segment filtering, terminology, customization and more.
+Swordfish 使用翻译记忆库（TM）和机器翻译（MT），支持片段过滤、术语管理、自定义等多种功能。
 
-## Swordfish Videos
-- [Build Swordfish from Source Code](https://youtu.be/VQveu4BLElE)
-- [Translate a Segment Using the AI Prompt Dialog](https://youtu.be/8S420n2QieM)
-- [Translate a Segment Using the AI Menu or Keyboard Shortcuts](https://youtu.be/FwsFZCjUajU)
+## Swordfish 视频教程
+- [从源码构建 Swordfish](https://youtu.be/VQveu4BLElE)
+- [使用 AI 提示对话框翻译片段](https://youtu.be/8S420n2QieM)
+- [通过 AI 菜单或快捷键翻译片段](https://youtu.be/FwsFZCjUajU)
 
-## Licenses
+## 许可协议
 
-Swordfish is available in two modes:
+Swordfish 提供两种使用模式：
 
-- Source Code
-- Yearly Subscriptions for installers and support
+- 源代码版
+- 年度订阅（含安装包和技术支持）
 
-### Source Code
+### 源代码版
 
-Source code of Swordfish is free. Anyone can download the source code, compile, modify and use it at no cost in compliance with the accompanying license terms.
+Swordfish 的源代码是免费的。任何人都可以免费下载、编译、修改和使用，需遵守随附的许可条款。
 
-You can subscribe to [Maxprograms Support](https://groups.io/g/maxprograms/) at Groups.io and request peer assistance for the source code version there.
+你可以在 [Maxprograms Support](https://groups.io/g/maxprograms/)（Groups.io 社区）订阅并请求源代码版的同行协助。
 
-### Subscriptions
+### 订阅版
 
-The version of Swordfish included in the official installers from [Maxprograms Download Page](https://www.maxprograms.com/downloads/index.html) can be used at no cost for 30 days requesting a free Evaluation Key.
+通过 [Maxprograms 下载页面](https://www.maxprograms.com/downloads/index.html) 获取的官方安装包版本，可免费试用 30 天并申请评估密钥。
 
-Personal Subscription Keys are available in  [Maxprograms Online Store](https://www.maxprograms.com/store/buy.html). Subscription Keys cannot be shared or transferred to different machines.
+个人订阅密钥可在 [Maxprograms 在线商店](https://www.maxprograms.com/store/buy.html) 购买。订阅密钥不可共享或转移至其他设备。
 
-Subscription version includes unlimited email support at [tech@maxprograms.com](mailto:tech@maxprograms.com)
+订阅版包含不限次数的邮件技术支持：[tech@maxprograms.com](mailto:tech@maxprograms.com)
 
-### Differences sumary
+### 差异总结
 
-Differences | Source Code | Subscription Based
-------------|:-----------:|:-----------------:
-Ready To Use Installers| No | Yes
-Notarized macOS launcher| No | Yes
-Signed launcher and installer for Windows | No | Yes
-Restricted Features | None | None
-Technical Support |  Peer support at [Groups.io](https://groups.io/g/maxprograms/)| - Direct email at [tech@maxprograms.com](mailto:tech@maxprograms.com)  <br> - Peer support at [Groups.io](https://groups.io/g/maxprograms/)
+差异 | 源代码版 | 订阅版
+----|:------:|:------:
+可用安装包 | 否 | 是
+macOS 签名启动器 | 否 | 是
+Windows 签名启动器及安装包 | 否 | 是
+受限功能 | 无 | 无
+技术支持 | [Groups.io](https://groups.io/g/maxprograms/) 同行支持 | - 邮件直达 [tech@maxprograms.com](mailto:tech@maxprograms.com) <br> - [Groups.io](https://groups.io/g/maxprograms/) 同行支持
 
-## Related Projects
+## 相关项目
 
 - [RemoteTM](https://github.com/rmraya/RemoteTM)
 - [OpenXLIFF Filters](https://github.com/rmraya/OpenXLIFF)
 
-## Requirements
+## 环境要求
 
-- JDK 21 or newer is required for compiling and building. Get it from [Adoptium](https://adoptium.net/).
-- Apache Ant 1.10.14 or newer. Get it from [https://ant.apache.org/](https://ant.apache.org/)
-- Node.js 22.13.0 LTS or newer. Get it from [https://nodejs.org/](https://nodejs.org/)
-- TypeScript 5.8.3 or newer, get it from [https://www.typescriptlang.org/](https://www.typescriptlang.org/)
+- 编译和构建需 JDK 21 或更高版本。可从 [Adoptium](https://adoptium.net/) 获取。
+- 需 Apache Ant 1.10.14 或更高版本。可从 [https://ant.apache.org/](https://ant.apache.org/) 获取。
+- 需 Node.js 22.13.0 LTS 或更高版本。可从 [https://nodejs.org/](https://nodejs.org/) 获取。
+- 需 TypeScript 5.8.3 或更高版本。可从 [https://www.typescriptlang.org/](https://www.typescriptlang.org/) 获取。
 
-## Building
+## 构建方法
 
-- Checkout this repository.
-- Point your `JAVA_HOME` environment variable to JDK 21
-- Run `ant` to compile the Java code
-- Run `npm install` to download and install NodeJS dependencies
-- Run `npm start` to launch Swordfish
+- 克隆本仓库。
+- 设置 `JAVA_HOME` 环境变量指向 JDK 21。
+- 运行 `ant` 编译 Java 代码。
+- 运行 `npm install` 下载并安装 NodeJS 依赖。
+- 运行 `npm start` 启动 Swordfish。
 
-### Steps for building
+### 构建步骤示例
 
 ``` bash
   git clone https://github.com/rmraya/Swordfish.git
@@ -72,4 +72,8 @@ Technical Support |  Peer support at [Groups.io](https://groups.io/g/maxprograms
   npm start
 ```
 
-Compile once and then simply run `npm start` to start Swordfish.
+首次编译后，直接运行 `npm start` 即可启动 Swordfish。
+
+---
+
+*脚注：此版本为北京语言大学韩林涛在 Swordfish 开源版本基础上进行定制的版本*
