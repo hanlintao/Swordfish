@@ -677,4 +677,19 @@ public class SqliteDatabase implements ITmEngine {
         }
         return 0;
     }
+
+    @Override
+    public java.util.List<com.maxprograms.xml.Element> getAllTerms() throws SQLException, IOException, org.xml.sax.SAXException, javax.xml.parsers.ParserConfigurationException {
+        java.util.List<com.maxprograms.xml.Element> result = new java.util.Vector<>();
+        try (java.sql.Statement stmt = conn.createStatement()) {
+            try (java.sql.ResultSet rs = stmt.executeQuery("SELECT DISTINCT tuid FROM tuv")) {
+                while (rs.next()) {
+                    String tuid = rs.getString(1);
+                    com.maxprograms.xml.Element tu = getTu(tuid);
+                    result.add(tu);
+                }
+            }
+        }
+        return result;
+    }
 }

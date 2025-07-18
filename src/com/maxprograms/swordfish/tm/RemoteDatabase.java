@@ -437,4 +437,10 @@ public class RemoteDatabase implements ITmEngine {
         JSONObject json = postMessage("/memories", params);
         return json.getJSONArray("matches");
     }
+
+    @Override
+    public java.util.List<com.maxprograms.xml.Element> getAllTerms() throws java.sql.SQLException, java.io.IOException, org.xml.sax.SAXException, javax.xml.parsers.ParserConfigurationException {
+        // 远程数据库暂不支持获取所有术语，返回空列表
+        return new java.util.Vector<>();
+    }
 }

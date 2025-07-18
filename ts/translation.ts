@@ -93,6 +93,8 @@ class TranslationView {
 
     notesVisible: boolean = false;
 
+    sourceText: string = '';
+
     constructor(tab: Tab, projectId: string, sourceLang: string, targetLang: string, rows: number) {
         this.container = tab.getContainer();
         this.projectId = projectId;
@@ -287,6 +289,45 @@ class TranslationView {
             this.setZoom(arg.zoom);
         });
         this.setSpellChecker();
+
+        this.electron.ipcRenderer.on('set-terms', (event: any, terms: any[]) => {
+            this.termsPanel?.setTerms(terms);
+        });
+
+        this.electron.ipcRenderer.on('insert-translation', (event: any, data: any) => {
+            if (this.currentCell && data.translation) {
+                // 如果当前单元格为空，直接插入译文
+                if (this.currentCell.innerText.trim() === '') {
+                    this.currentCell.innerText = data.translation;
+                } else {
+                    // 如果不为空，在光标位置插入译文
+                    let selection = window.getSelection();
+                    if (selection && selection.rangeCount > 0) {
+                        let range = selection.getRangeAt(0);
+                        if (this.currentCell.contains(range.commonAncestorContainer)) {
+                            range.deleteContents();
+                            range.insertNode(document.createTextNode(data.translation));
+                            range.collapse(false);
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+                        } else {
+                            // 如果光标不在当前单元格内，追加到末尾
+                            this.currentCell.innerText += ' ' + data.translation;
+                        }
+                    } else {
+                        // 没有选择，追加到末尾
+                        this.currentCell.innerText += ' ' + data.translation;
+                    }
+                }
+                // 触发变更事件
+                this.changeListener();
+            }
+        });
+
+        this.electron.ipcRenderer.on('set-matched-terms', (event: any, matchedTerms: any[]) => {
+            console.log('[translation] 收到匹配术语:', matchedTerms.length);
+            this.termsPanel?.setMatchedTerms(matchedTerms);
+        });
     }
 
     setZoom(zoom: string): void {
@@ -624,6 +665,10 @@ class TranslationView {
         this.glossSelect.style.minWidth = '180px';
         this.glossSelect.addEventListener('change', () => {
             this.electron.ipcRenderer.send('set-project-glossary', { project: this.projectId, glossary: this.glossSelect.value });
+            // 同步更新术语面板的术语库ID
+            if (this.termsPanel && this.glossSelect.value !== 'none') {
+                this.termsPanel.setGlossaryId(this.glossSelect.value);
+            }
         });
         this.topBar.appendChild(this.glossSelect);
 
@@ -1235,7 +1280,7 @@ class TranslationView {
     }
 
     getMachineTranslations(): void {
-        this.electron.ipcRenderer.send('machine-translate', {
+        let params: any = {
             project: this.projectId,
             file: this.currentId.file,
             unit: this.currentId.unit,
@@ -1247,7 +1292,17 @@ class TranslationView {
                 unit: this.currentId.unit,
                 id: this.currentId.id
             }
-        });
+        };
+        
+        // 添加术语库信息
+        if (this.glossSelect && this.glossSelect.value && this.glossSelect.value !== 'none') {
+            params.glossary = this.glossSelect.value;
+            console.log('[机器翻译] 传递术语库ID:', params.glossary);
+        } else {
+            console.log('[机器翻译] 未选择术语库');
+        }
+        
+        this.electron.ipcRenderer.send('machine-translate', params);
     }
 
     getAssembledMatches(): void {
@@ -1483,6 +1538,7 @@ class TranslationView {
 
         this.currentId = { id: id, file: file, unit: unit };
         let source: HTMLTableCellElement = this.currentRow.getElementsByClassName('source')[0] as HTMLTableCellElement;
+        this.sourceText = source.innerText;
         this.sourceTags = this.getTags(source);
 
         this.currentCell = this.currentRow.getElementsByClassName('target')[0] as HTMLTableCellElement;
@@ -1503,8 +1559,22 @@ class TranslationView {
             project: this.projectId,
             file: this.currentId.file,
             unit: this.currentId.unit,
-            segment: this.currentId.id
+            segment: this.currentId.id,
+            source: source.innerText
         };
+        
+        if (this.glossSelect && this.glossSelect.value && this.glossSelect.value !== 'none') {
+            params.glossary = this.glossSelect.value;
+            // 显示加载状态
+            this.termsPanel?.showLoading();
+            // 自动匹配术语
+            this.matchTermsInSegment(this.sourceText, this.glossSelect.value);
+        } else {
+            this.electron.ipcRenderer.send('show-message', { type: 'warning', message: '请先选择术语库' });
+            this.termsPanel?.clear();
+            return;
+        }
+        
         this.electron.ipcRenderer.send('get-matches', params);
         this.electron.ipcRenderer.send('get-terms', params);
         if (this.notesVisible) {
@@ -1513,6 +1583,14 @@ class TranslationView {
 
         this.centerRow(this.currentRow);
         this.currentCell.focus();
+    }
+
+    matchTermsInSegment(sourceText: string, glossaryId: string): void {
+        // 请求术语库中的所有术语
+        this.electron.ipcRenderer.send('match-segment-terms', { 
+            source: sourceText, 
+            glossary: glossaryId 
+        });
     }
 
     editSource(): void {
@@ -2081,11 +2159,12 @@ class TranslationView {
         }
         let array: string[] = [];
         let options: string = '<option value="none" class="error">-- Select Glossary --</option>';
-        let length: number = glossaries.length;
-        for (let i: number = 0; i < length; i++) {
-            let mem: string[] = glossaries[i];
-            array.push(mem[0]);
-            options = options + '<option value="' + mem[0] + '">' + mem[1] + '</option>';
+        for (let i = 0; i < glossaries.length; i++) {
+            // 兼容对象数组和数组数组
+            let id = glossaries[i].id || glossaries[i][0];
+            let name = glossaries[i].name || glossaries[i][1];
+            array.push(id);
+            options += '<option value="' + id + '">' + name + '</option>';
         }
         this.glossSelect.innerHTML = options;
         if (array.includes(arg.default)) {

@@ -958,6 +958,44 @@ export class Swordfish {
             Swordfish.mainWindow.webContents.send('remember-segment');
             Swordfish.fixSpaceErrors(event);
         });
+        ipcMain.on('get-glossary-terms', (event: IpcMainEvent, arg: any) => {
+            console.log('[get-glossary-terms] 请求参数:', JSON.stringify(arg));
+            Swordfish.sendRequest('/glossaries/terms', { glossary: arg.glossary },
+                (data: any) => {
+                    console.log('[get-glossary-terms] 后端返回完整响应:', JSON.stringify(data));
+                    console.log('[全部术语] 返回:', JSON.stringify(data.terms));
+                    if (data.terms) {
+                        event.sender.send('set-glossary-terms', data.terms);
+                    } else {
+                        event.sender.send('set-glossary-terms', []);
+                    }
+                },
+                (reason: string) => {
+                    console.log('[get-glossary-terms] 请求失败:', reason);
+                    event.sender.send('set-glossary-terms', []);
+                }
+            );
+        });
+        ipcMain.on('match-segment-terms', (event: IpcMainEvent, arg: any) => {
+            console.log('[match-segment-terms] 请求参数:', JSON.stringify(arg));
+            Swordfish.sendRequest('/glossaries/terms', { glossary: arg.glossary },
+                (data: any) => {
+                    console.log('[match-segment-terms] 后端返回术语数量:', data.terms ? data.terms.length : 0);
+                    if (data.terms && data.terms.length > 0) {
+                        // 在句段中匹配术语
+                        let matchedTerms = Swordfish.matchTermsInSource(arg.source, data.terms);
+                        console.log('[match-segment-terms] 匹配到术语数量:', matchedTerms.length);
+                        event.sender.send('set-matched-terms', matchedTerms);
+                    } else {
+                        event.sender.send('set-matched-terms', []);
+                    }
+                },
+                (reason: string) => {
+                    console.log('[match-segment-terms] 请求失败:', reason);
+                    event.sender.send('set-matched-terms', []);
+                }
+            );
+        });
     } // end constructor
 
     static deleteAllTags(background: string, foreground: string): void {
@@ -3303,18 +3341,37 @@ export class Swordfish {
     }
 
     static getTerms(arg: any): void {
+        if (!arg.glossary) {
+            Swordfish.showMessage({ type: 'error', message: '未指定术语库，请先选择术语库！' });
+            return;
+        }
+        let glossaryInfo = arg.glossary ? `[术语库ID]: ${arg.glossary}` : '[术语库ID]: 未指定';
+        console.log('[术语匹配] 请求参数:', JSON.stringify(arg), glossaryInfo);
         Swordfish.sendRequest('/projects/terms', arg,
             (data: any) => {
+                console.log('[术语匹配] 后端返回:', JSON.stringify(data), glossaryInfo);
                 if (data.status !== Swordfish.SUCCESS) {
                     Swordfish.showMessage({ type: 'error', message: data.reason });
                     return;
                 }
-                if (data.terms.length > 0) {
-                    Swordfish.mainWindow.webContents.send('set-terms', { project: arg.project, terms: data.terms });
+                let matchedTerms: any[] = [];
+                if (data.terms && data.terms.length > 0 && arg.source) {
+                    let src = (arg.source || '').trim();
+                    matchedTerms = data.terms.filter((term: any) => {
+                        let termSource = (term.source || '').trim();
+                        // 只用 includes 匹配
+                        return src.includes(termSource);
+                    });
                 }
+                // 如果没有匹配到，返回全部术语
+                if (!matchedTerms || matchedTerms.length === 0) {
+                    matchedTerms = data.terms;
+                }
+                Swordfish.mainWindow.webContents.send('set-terms', { project: arg.project, terms: matchedTerms });
             },
             (reason: string) => {
                 Swordfish.showMessage({ type: 'error', message: reason });
+                console.log('[术语匹配] 请求失败:', reason, glossaryInfo);
             }
         );
     }
@@ -4956,15 +5013,34 @@ export class Swordfish {
     }
 
     static addToGlossary(arg: any): void {
-        this.addTermWindow.close();
         Swordfish.sendRequest('/glossaries/addTerm', arg,
             (data: any) => {
-                if (data.status !== Swordfish.SUCCESS) {
-                    Swordfish.showMessage({ type: 'error', message: data.reason });
+                let isSuccess = false;
+                let message = '';
+                if (data && typeof data === 'object' && data.status === Swordfish.SUCCESS) {
+                    isSuccess = true;
+                    message = '术语添加成功';
+                } else if (data && typeof data === 'object' && data.reason) {
+                    message = data.reason;
+                } else if (data && typeof data === 'string') {
+                    message = data;
+                } else {
+                    message = '添加术语失败，未知错误';
                 }
+                Swordfish.addTermWindow.webContents.send('add-to-glossary-result', { success: isSuccess, message });
+                setTimeout(() => {
+                    if (Swordfish.addTermWindow) {
+                        Swordfish.addTermWindow.close();
+                    }
+                }, 800);
             },
             (reason: string) => {
-                Swordfish.showMessage({ type: 'error', message: reason });
+                Swordfish.addTermWindow.webContents.send('add-to-glossary-result', { success: false, message: reason });
+                setTimeout(() => {
+                    if (Swordfish.addTermWindow) {
+                        Swordfish.addTermWindow.close();
+                    }
+                }, 800);
             }
         );
     }
@@ -5998,6 +6074,65 @@ export class Swordfish {
         setTimeout(() => {
             Swordfish.checkUpdates(true);
         }, 2000);
+    }
+
+    static matchTermsInSource(sourceText: string, allTerms: any[]): any[] {
+        let matchedTerms: any[] = [];
+        console.log('[matchTermsInSource] 源文本:', sourceText);
+        console.log('[matchTermsInSource] 源文本长度:', sourceText.length);
+        console.log('[matchTermsInSource] 术语总数:', allTerms.length);
+        
+        // 详细打印所有术语
+        for (let i = 0; i < allTerms.length; i++) {
+            let term = allTerms[i];
+            console.log(`[matchTermsInSource] 术语${i+1}:`, JSON.stringify(term));
+        }
+        
+        for (let term of allTerms) {
+            console.log('[matchTermsInSource] 当前检查的术语对象:', JSON.stringify(term));
+            
+            if (term.source) {
+                let termSource = term.source;
+                console.log('[matchTermsInSource] 检查术语:', termSource);
+                console.log('[matchTermsInSource] 术语长度:', termSource.length);
+                console.log('[matchTermsInSource] 术语类型:', typeof termSource);
+                
+                // 判断是否包含中文字符
+                let hasChinese = /[\u4e00-\u9fff]/.test(termSource);
+                console.log('[matchTermsInSource] 是否包含中文:', hasChinese);
+                let matched = false;
+                
+                if (hasChinese) {
+                    // 中文术语直接使用字符串包含匹配
+                    matched = sourceText.includes(termSource);
+                    console.log('[matchTermsInSource] 中文匹配检查: 源文本是否包含术语');
+                    console.log('[matchTermsInSource] 源文本:', `"${sourceText}"`);
+                    console.log('[matchTermsInSource] 术语文本:', `"${termSource}"`);
+                    console.log('[matchTermsInSource] 中文匹配结果:', matched);
+                } else {
+                    // 英文术语使用单词边界匹配
+                    let regex = new RegExp('\\b' + this.escapeRegExp(termSource) + '\\b', 'i');
+                    matched = regex.test(sourceText);
+                    console.log('[matchTermsInSource] 英文匹配正则:', regex.toString());
+                    console.log('[matchTermsInSource] 英文匹配结果:', matched);
+                }
+                
+                if (matched) {
+                    console.log('[matchTermsInSource] 匹配成功:', termSource);
+                    matchedTerms.push(term);
+                } else {
+                    console.log('[matchTermsInSource] 匹配失败:', termSource);
+                }
+            } else {
+                console.log('[matchTermsInSource] 术语source字段为空或未定义:', term);
+            }
+        }
+        console.log('[matchTermsInSource] 最终匹配数量:', matchedTerms.length);
+        return matchedTerms;
+    }
+
+    static escapeRegExp(string: string): string {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 }
 

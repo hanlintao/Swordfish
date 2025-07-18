@@ -73,4 +73,6 @@ public interface ITmEngine {
 
 	public abstract JSONArray batchTranslate(JSONObject params)
 			throws IOException, SAXException, ParserConfigurationException, SQLException, URISyntaxException;
+
+	public abstract java.util.List<com.maxprograms.xml.Element> getAllTerms() throws java.sql.SQLException, java.io.IOException, org.xml.sax.SAXException, javax.xml.parsers.ParserConfigurationException;
 }

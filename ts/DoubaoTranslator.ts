@@ -49,7 +49,12 @@ export class DoubaoTranslator implements MTEngine {
     }
 
     getMTMatch(source: any, terms: any): Promise<MTMatch> {
+        console.log('[豆包翻译] 收到术语数量:', terms ? terms.length : 0);
+        if (terms && terms.length > 0) {
+            console.log('[豆包翻译] 术语详情:', JSON.stringify(terms));
+        }
         let prompt = MTUtils.generatePrompt(source, this.srcLang, this.tgtLang, terms);
+        console.log('[豆包翻译] 生成的提示词:', prompt);
         return new Promise((resolve, reject) => {
             this.openai.chat.completions.create({
                 model: this.model,

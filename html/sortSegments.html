@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 
 <head>
-    <title>Sort Segments</title>
+    <title>片段排序</title>
     <link id="theme" rel="stylesheet" type="text/css" href="../css/light.css">
     <link rel="stylesheet" type="text/css" href="../css/fonts.css">
 </head>
@@ -14,7 +14,7 @@
                 <input type="radio" id="language" name="sortType" checked>
             </td>
             <td class=" middle noWrap fill_width">
-                <label for="language">Sort on Column Text Content</label>
+                <label for="language">按列文本内容排序</label>
             </td>
         </tr>
         <tr>
@@ -26,13 +26,13 @@
                             <input type="radio" id="source" name="lang" checked>
                         </td>
                         <td class="middle noWrap">
-                            <label for="source">Source Column</label>
+                            <label for="source">源列</label>
                         </td>
                         <td class="middle">
                             <input type="radio" id="target" name="lang">
                         </td>
                         <td class="middle noWrap">
-                            <label for="target">Target Column</label>
+                            <label for="target">目标列</label>
                         </td>
                         <td class="middle fill_width">&nbsp;</td>
                     </tr>
@@ -44,21 +44,20 @@
                 <input type="radio" id="status" name="sortType">
             </td>
             <td class="middle noWrap fill_width">
-                <label for="status">Sort on Segment Status</label>
+                <label for="status">按片段状态排序</label>
             </td>
         </tr>
     </table>
     <table>
         <tr>
             <td class="middle"><input type="checkbox" id="descending"></td>
-            <td class="middle noWrap fill_width"><label for="descending" checked style="margin-top: 2px;">Sort
-                    Descending</label></td>
+            <td class="middle noWrap fill_width"><label for="descending" checked style="margin-top: 2px;">降序排序</label></td>
         </tr>
     </table>
 
     <div class="buttonArea">
-        <button id="clearSort">Clear Sorting</button>
-        <button id="sort">Sort Segments</button>
+        <button id="clearSort">清除排序</button>
+        <button id="sort">排序片段</button>
     </div>
     <script src="../js/sortSegments.js"></script>
 </body>

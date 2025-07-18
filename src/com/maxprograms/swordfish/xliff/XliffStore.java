@@ -5037,18 +5037,94 @@ public class XliffStore {
 		result.put("tgtLang", tgtLang);
 		String plainText = XliffUtils.pureText(source);
 		result.put("plainText", "<source>" + XliffUtils.cleanString(plainText) + "</source>");
-		getTerms.setString(1, json.getString("file"));
-		getTerms.setString(2, json.getString("unit"));
-		getTerms.setString(3, json.getString("segment"));
+		
+		// 优先从术语库中获取所有术语（简化方案）
 		JSONArray terms = new JSONArray();
-		try (ResultSet rs = getTerms.executeQuery()) {
-			while (rs.next()) {
-				JSONObject term = new JSONObject();
-				term.put("source", rs.getString(3));
-				term.put("target", rs.getString(4));
-				terms.put(term);
+		if (json.has("glossary")) {
+			try {
+				String glossary = json.getString("glossary");
+				System.out.println("[getSegment] 使用术语库: " + glossary + " 获取术语");
+				
+				// 直接通过ITmEngine获取术语
+				GlossariesHandler.openGlossary(glossary);
+				ITmEngine engine = GlossariesHandler.getEngine(glossary);
+				List<Element> allTermElements = engine.getAllTerms();
+				GlossariesHandler.closeGlossary(glossary);
+				
+				System.out.println("[getSegment] 从术语库获取所有术语数量: " + allTermElements.size());
+				
+				// 解析术语并进行匹配
+				for (Element tu : allTermElements) {
+					Map<String, String> langMap = new Hashtable<>();
+					List<Element> tuvs = tu.getChildren("tuv");
+					
+					// 收集所有语言变体
+					for (Element tuv : tuvs) {
+						String lang = tuv.getAttributeValue("xml:lang");
+						String seg = "";
+						Element segElem = tuv.getChild("seg");
+						if (segElem != null) {
+							seg = MemoriesHandler.pureText(segElem);
+						}
+						if (lang != null && !seg.isEmpty()) {
+							langMap.put(lang, seg);
+						}
+					}
+					
+					// 构建术语对象
+					String sourceText = null;
+					String targetText = null;
+					
+					// 查找中文作为源语言
+					if (langMap.containsKey("zh-CN")) {
+						sourceText = langMap.get("zh-CN");
+					} else if (langMap.containsKey("zh")) {
+						sourceText = langMap.get("zh");
+					}
+					
+					// 查找英文作为目标语言
+					if (langMap.containsKey("en-US")) {
+						targetText = langMap.get("en-US");
+					} else if (langMap.containsKey("en")) {
+						targetText = langMap.get("en");
+					}
+					
+					// 如果找到完整的术语对，并且源文本包含该术语
+					if (sourceText != null && targetText != null && plainText.contains(sourceText)) {
+						JSONObject termObj = new JSONObject();
+						termObj.put("source", sourceText);
+						termObj.put("target", targetText);
+						termObj.put("srcLang", langMap.containsKey("zh-CN") ? "zh-CN" : "zh");
+						termObj.put("tgtLang", langMap.containsKey("en-US") ? "en-US" : "en");
+						termObj.put("origin", GlossariesHandler.getGlossaryName(glossary));
+						terms.put(termObj);
+						System.out.println("[getSegment] 匹配术语: " + sourceText + " -> " + targetText);
+					}
+				}
+				System.out.println("[getSegment] 最终匹配术语数量: " + terms.length());
+			} catch (Exception e) {
+				System.out.println("[getSegment] 从术语库获取术语失败: " + e.getMessage());
+				// 如果从术语库获取失败，回退到预存术语
+				terms = new JSONArray();
 			}
 		}
+		
+		// 如果没有从术语库获取到术语，尝试从数据库获取预存术语
+		if (terms.length() == 0) {
+			getTerms.setString(1, json.getString("file"));
+			getTerms.setString(2, json.getString("unit"));
+			getTerms.setString(3, json.getString("segment"));
+			try (ResultSet rs = getTerms.executeQuery()) {
+				while (rs.next()) {
+					JSONObject term = new JSONObject();
+					term.put("source", rs.getString(3));
+					term.put("target", rs.getString(4));
+					terms.put(term);
+				}
+			}
+			System.out.println("[getSegment] 从数据库获取预存术语数量: " + terms.length());
+		}
+		
 		result.put("terms", terms);
 		return result;
 	}

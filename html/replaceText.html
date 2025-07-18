@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 
 <head>
-    <title>Replace Text</title>
+    <title>替换文本</title>
     <link id="theme" rel="stylesheet" type="text/css" href="../css/light.css">
     <link rel="stylesheet" type="text/css" href="../css/fonts.css">
 </head>
@@ -10,26 +10,26 @@
 <body class="dialogBody" onload="new ReplaceText();">
     <table class="table_width">
         <tr>
-            <td class="middle noWrap"><label for="searchText">Text to Search</label></td>
+            <td class="middle noWrap"><label for="searchText">查找内容</label></td>
             <td class="middle fill_width"><input type="text" id="searchText" class="table_input"></td>
         </tr>
         <tr>
-            <td class="middle noWrap"><label for="replaceText">Replace With</label></td>
+            <td class="middle noWrap"><label for="replaceText">替换为</label></td>
             <td class="middle fill_width"><input type="text" id="replaceText" class="table_input"></td>
         </tr>
         <tr>
-            <td class="noWrap"><label class="middle">Options</label></td>
+            <td class="noWrap"><label class="middle">选项</label></td>
             <td>
                 <input type="checkbox" id="caseSensitive" class="middle">
-                <label for="caseSensitive" class="middle noWrap">Case Sensitive Search</label><br>
+                <label for="caseSensitive" class="middle noWrap">区分大小写搜索</label><br>
                 <input type="checkbox" id="regularExpression" class="middle">
-                <label for="regularExpression" class="middle noWrap">Regular Expression</label>
+                <label for="regularExpression" class="middle noWrap">正则表达式</label>
             </td>
         </tr>
     </table>
 
     <div class="buttonArea">
-        <button id="replace">Replace Text</button>
+        <button id="replace">替换文本</button>
     </div>
     <script src="../js/replaceText.js"></script>
 </body>

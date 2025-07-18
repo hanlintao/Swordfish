@@ -40,6 +40,14 @@ class AddTerm {
         this.electron.ipcRenderer.on('set-selected-text', (event: Electron.IpcRendererEvent, arg: { selected: string, lang?: string, srcLang: string, tgtLang: string }) => {
             this.setParams(arg);
         });
+        this.electron.ipcRenderer.on('add-to-glossary-result', (event: Electron.IpcRendererEvent, result: { success: boolean, message: string }) => {
+            alert(result.message);
+            if (result.success) {
+                setTimeout(() => {
+                    this.electron.ipcRenderer.send('close-addTerm');
+                }, 800);
+            }
+        });
         (document.getElementById('srcLangSelect') as HTMLSelectElement).addEventListener('change', () => {
             let code: string = (document.getElementById('srcLangSelect') as HTMLSelectElement).value;
             if (this.isBiDi(code)) {

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
-    <title>New Project</title>
+    <title>新建项目</title>
     <link id="theme" rel="stylesheet" type="text/css" href="../css/light.css">
     <link rel="stylesheet" type="text/css" href="../css/fonts.css">
 </head>
@@ -11,7 +11,7 @@
     <table class="fill_width">
         <tr>
             <td class="middle">
-                <label for="nameInput">Name</label>
+                <label for="nameInput">项目名称</label>
             </td>
             <td class="fill_width middle">
                 <input type="text" id="nameInput" class="table_input">
@@ -25,7 +25,7 @@
                 <table class="fill_width">
                     <tr style="height: 2.5em;">
                         <td class="middle noWrap">
-                            <label for="srcLangSelect">Source Language</label>
+                            <label for="srcLangSelect">源语言</label>
                         </td>
                         <td class="fill_width middle form_height">
                             <select id="srcLangSelect" class="fill_width">
@@ -35,7 +35,7 @@
                     </tr>
                     <tr style="height: 2.5em;">
                         <td class="middle noWrap">
-                            <label for="tgtLangSelect">Target Language</label>
+                            <label for="tgtLangSelect">目标语言</label>
                         </td>
                         <td class="fill_width middle form_height">
                             <select id="tgtLangSelect" class="fill_width">
@@ -45,14 +45,14 @@
                     </tr>
                     <tr>
                         <td class=" noWrap">
-                            <label for="memorySelect">Default Memory</label>
+                            <label for="memorySelect">默认记忆库</label>
                         </td>
                         <td class="fill_width ">
                             <select id="memorySelect" class="fill_width">
 
                             </select>
                             <input type="checkbox" id="applyTM" class="middle">
-                            <label for="applyTM" class="middle">Apply Translation Memory</label>
+                            <label for="applyTM" class="middle">应用翻译记忆库</label>
                         </td>
                     </tr>
                 </table>
@@ -61,7 +61,7 @@
                 <table class="fill_width">
                     <tr style="height: 2.5em;">
                         <td class="middle">
-                            <label for="subjectInput">Subject</label>
+                            <label for="subjectInput">主题</label>
                         </td>
                         <td class="fill_width middle form_height">
                             <input list="subjects" id="subjectInput" class="table_input middle" >
@@ -72,7 +72,7 @@
                     </tr>
                     <tr style="height: 2.5em;">
                         <td class="middle">
-                            <label for="clientInput">Client</label>
+                            <label for="clientInput">客户</label>
                         </td>
                         <td class="fill_width middle form_height">
                             <input list="clients" id="clientInput" class="table_input middle" >
@@ -83,14 +83,14 @@
                     </tr>
                     <tr>
                         <td class=" noWrap">
-                            <label for="glossarySelect">Default Glossary</label>
+                            <label for="glossarySelect">默认术语库</label>
                         </td>
                         <td class="fill_width" style="padding-right: 8px;">
                             <select id="glossarySelect" class="fill_width"  >
 
                             </select>
                             <input type="checkbox" id="searchTerms" class="middle">
-                            <label for="searchTerms" class="middle">Search Terms</label>
+                            <label for="searchTerms" class="middle">搜索术语</label>
                         </td>
                     </tr>
                 </table>
@@ -102,9 +102,9 @@
             <thead>
                 <tr class="noWrap">
                     <th style="min-width: 20px;">&nbsp;</th>
-                    <th class="fill_width" style="text-align: left; max-width: 400px;">File Name</th>
-                    <th style="min-width: 200px;">File Type</th>
-                    <th style="min-width: 150px;">Character Set</th>
+                    <th class="fill_width" style="text-align: left; max-width: 400px;">文件名</th>
+                    <th style="min-width: 200px;">文件类型</th>
+                    <th style="min-width: 150px;">字符集</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
@@ -114,9 +114,9 @@
     </div>
 
     <div class="buttonArea">
-        <button id="addFilesButton">Add Files</button>
+        <button id="addFilesButton">添加文件</button>
         <span class="fill_width">&nbsp;</span>
-        <button id="addProjectButton">Create Project</button>
+        <button id="addProjectButton">创建项目</button>
     </div>
     
     <script src="../js/addProject.js"></script>

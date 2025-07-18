@@ -109,6 +109,8 @@ public class GlossariesHandler implements HttpHandler {
 				response = searchTerm(request);
 			} else if ("/glossaries/addTerm".equals(url)) {
 				response = addTerm(request);
+			} else if ("/glossaries/terms".equals(url)) {
+				response = getAllTerms(request);
 			} else {
 				MessageFormat mf = new MessageFormat(Messages.getString("GlossariesHandler.1"));
 				response.put(Constants.REASON, mf.format(new String[] { url }));
@@ -606,5 +608,87 @@ public class GlossariesHandler implements HttpHandler {
 		Map<String, Memory> glossaries = getGlossaries();
 		glossaries.put(memory.getId(), memory);
 		saveGlossariesList(glossaries);
+	}
+
+	private static JSONObject getAllTerms(String request) {
+		JSONObject result = new JSONObject();
+		JSONObject json = new JSONObject(request);
+		if (!json.has("glossary")) {
+			result.put(Constants.REASON, "缺少 glossary 参数");
+			return result;
+		}
+		String glossary = json.getString("glossary");
+		System.out.println("[getAllTerms] 请求glossary: " + glossary);
+		try {
+			Map<String, Memory> glossaries = getGlossaries();
+			System.out.println("[getAllTerms] 找到术语库数量: " + glossaries.size());
+			openGlossary(glossaries.get(glossary));
+			ITmEngine engine = getEngine(glossary);
+			java.util.List<com.maxprograms.xml.Element> terms = engine.getAllTerms();
+			System.out.println("[getAllTerms] 从数据库获取术语数量: " + terms.size());
+			closeGlossary(glossary);
+			JSONArray arr = new JSONArray();
+			
+			// 使用正确的术语构建模式，参考XliffStore.parseMatches方法
+			for (com.maxprograms.xml.Element tu : terms) {
+				Map<String, String> langMap = new java.util.Hashtable<>();
+				java.util.List<com.maxprograms.xml.Element> tuvs = tu.getChildren("tuv");
+				System.out.println("[getAllTerms] 处理术语单元，tuv数量: " + tuvs.size());
+				
+				// 收集所有语言变体到Map中
+				for (com.maxprograms.xml.Element tuv : tuvs) {
+					String lang = tuv.getAttributeValue("xml:lang");
+					String seg = "";
+					com.maxprograms.xml.Element segElem = tuv.getChild("seg");
+					if (segElem != null) {
+						seg = com.maxprograms.swordfish.MemoriesHandler.pureText(segElem);
+					}
+					if (lang != null && !seg.isEmpty()) {
+						langMap.put(lang, seg);
+						System.out.println("[getAllTerms] 收集语言变体: lang=" + lang + ", seg=" + seg);
+					}
+				}
+				
+				// 构建术语对象：中文(zh-CN)作为source，英文(en-US)作为target
+				String sourceText = null;
+				String targetText = null;
+				
+				// 优先查找zh-CN，如果没有则查找zh
+				if (langMap.containsKey("zh-CN")) {
+					sourceText = langMap.get("zh-CN");
+				} else if (langMap.containsKey("zh")) {
+					sourceText = langMap.get("zh");
+				}
+				
+				// 优先查找en-US，如果没有则查找en
+				if (langMap.containsKey("en-US")) {
+					targetText = langMap.get("en-US");
+				} else if (langMap.containsKey("en")) {
+					targetText = langMap.get("en");
+				}
+				
+				// 只有当同时有源语言和目标语言文本时才创建术语
+				if (sourceText != null && targetText != null) {
+					JSONObject termObj = new JSONObject();
+					termObj.put("source", sourceText);
+					termObj.put("target", targetText);
+					termObj.put("srcLang", langMap.containsKey("zh-CN") ? "zh-CN" : "zh");
+					termObj.put("tgtLang", langMap.containsKey("en-US") ? "en-US" : "en");
+					termObj.put("origin", getGlossaryName(glossary));
+					arr.put(termObj);
+					System.out.println("[getAllTerms] 添加完整术语: source=" + sourceText + ", target=" + targetText);
+				} else {
+					System.out.println("[getAllTerms] 跳过不完整术语，可用语言: " + langMap.keySet().toString());
+				}
+			}
+			System.out.println("[getAllTerms] 最终术语数组长度: " + arr.length());
+			result.put("terms", arr);
+		} catch (Exception e) {
+			System.out.println("[getAllTerms] 异常: " + e.getMessage());
+			e.printStackTrace();
+			result.put(Constants.REASON, e.getMessage());
+		}
+		System.out.println("[getAllTerms] 返回结果: " + result.toString());
+		return result;
 	}
 }

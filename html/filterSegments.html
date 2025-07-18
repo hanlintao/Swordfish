@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
-    <title>Filter Segments</title>
+    <title>片段过滤</title>
     <link id="theme" rel="stylesheet" type="text/css" href="../css/light.css">
     <link rel="stylesheet" type="text/css" href="../css/fonts.css">
 </head>
@@ -11,44 +11,44 @@
 
     <table>
         <tr>
-            <td class="noWrap middle"><label for="filterText" class="noWrap">Text to Search</label></td>
+            <td class="noWrap middle"><label for="filterText" class="noWrap">查找内容</label></td>
             <td class="middle fill_width"><input type="text" id="filterText" class="table_input"></td>
         </tr>
         <tr>
-            <td class="noWrap"><label class="middle noWrap">Search In</label></td>
+            <td class="noWrap"><label class="middle noWrap">查找范围</label></td>
             <td class="middle">
                 <input type="radio" id="source" name="where" value="source" class="middle" checked>
-                <label for="source" class="middle">Source</label>
+                <label for="source" class="middle">源文</label>
                 <input type="radio" id="target" name="where" value="target" class="middle">
-                <label for="target" class="middle">Target</label>
+                <label for="target" class="middle">译文</label>
             </td>
         </tr>
 
         <tr>
-            <td class="noWrap"><label class="middle">Options</label></td>
+            <td class="noWrap"><label class="middle">选项</label></td>
             <td>
                 <input type="checkbox" id="caseSensitive" class="middle">
-                <label for="caseSensitive" class="middle noWrap">Case Sensitive Search</label><br>
+                <label for="caseSensitive" class="middle noWrap">区分大小写搜索</label><br>
                 <input type="checkbox" id="isRegExp" class="middle">
-                <label for="isRegExp" class="middle noWrap">Regular Expression</label>
+                <label for="isRegExp" class="middle noWrap">正则表达式</label>
             </td>
         </tr>
         <tr>
-            <td class="noWrap"><label class="middle">Display</label></td>
+            <td class="noWrap"><label class="middle">显示</label></td>
             <td>
                 <input type="checkbox" id="showUntranslated" class="middle" checked>
-                <label for="showUntranslated" class="middle">Untranslated Segments</label><br>
+                <label for="showUntranslated" class="middle">未翻译片段</label><br>
                 <input type="checkbox" id="showTranslated" class="middle" checked>
-                <label for="showTranslated" class="middle">Translated Segments</label><br>
+                <label for="showTranslated" class="middle">已翻译片段</label><br>
                 <input type="checkbox" id="showConfirmed" class="middle" checked>
-                <label for="showConfirmed" class="middle">Confirmed Segments</label>
+                <label for="showConfirmed" class="middle">已确认片段</label>
             </td>
         </tr>
     </table>
 
     <div class="buttonArea">
-        <button id="clearFilter">Clear Filter</button>
-        <button id="filterSegments">Filter Segments</button>
+        <button id="clearFilter">清除过滤</button>
+        <button id="filterSegments">过滤片段</button>
     </div>
 
     <script src="../js/filterSegments.js"></script>

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
-    <title>Concordance Search</title>
+    <title>文本对齐搜索</title>
     <link id="theme" rel="stylesheet" type="text/css" href="../css/light.css">
     <link rel="stylesheet" type="text/css" href="../css/fonts.css">
 </head>
@@ -11,7 +11,7 @@
     <table class="fill_width">
         <tr>
             <td class="middle noWrap">
-                <label for="searchText">Text to Search</label>
+                <label for="searchText">搜索内容</label>
             </td>
             <td class="table_input middle">
                 <input type="text" id="searchText" class="table_input">
@@ -19,7 +19,7 @@
         </tr>
         <tr>
             <td class="middle noWrap">
-                <label for="languagesSelect">Language</label>
+                <label for="languagesSelect">语言</label>
             </td>
             <td class="fill_width middle">
                 <select id="languagesSelect" class="fill_width">
@@ -29,7 +29,7 @@
         </tr>
         <tr>
             <td class="middle noWrap">
-                <label for="maxEntries">Entries to Display</label>
+                <label for="maxEntries">显示条数</label>
             </td>
             <td class="fill_width middle">
                 <select id="maxEntries">
@@ -42,17 +42,17 @@
             </td>
         </tr>
         <tr>
-            <td class="noWrap"><label class="middle">Options</label></td>
+            <td class="noWrap"><label class="middle">选项</label></td>
             <td>
                 <input type="checkbox" id="caseSensitive" class="middle">
-                <label for="caseSensitive" class="middle noWrap">Case Sensitive Search</label><br>
+                <label for="caseSensitive" class="middle noWrap">区分大小写搜索</label><br>
                 <input type="checkbox" id="regularExpression" class="middle">
-                <label for="regularExpression" class="middle noWrap">Regular Expression</label>
+                <label for="regularExpression" class="middle noWrap">正则表达式</label>
             </td>
         </tr>
     </table>
     <div class="buttonArea">
-        <button id="searchButton">Search Text</button>
+        <button id="searchButton">搜索文本</button>
     </div>
 
     <script src="../js/concordanceSearch.js"></script>

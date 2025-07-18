@@ -16,6 +16,7 @@ class TermsPanel {
 
     container: HTMLDivElement;
     projectId: string;
+    glossaryId: string = '';
     selected: Term | undefined = undefined;
     selectedIndex: number = 0;
     terms: Term[] = [];
@@ -52,6 +53,20 @@ class TermsPanel {
         });
         toolbar.appendChild(getTerms);
 
+        let getAllTerms = document.createElement('a');
+        getAllTerms.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>' +
+            '<span class="tooltiptext topTooltip">显示术语库全部术语</span>';
+        getAllTerms.className = 'tooltip topTooltip ';
+        getAllTerms.addEventListener('click', () => {
+            if (this.glossaryId) {
+                console.log('[termsPanel] 请求术语库ID:', this.glossaryId);
+                this.electron.ipcRenderer.send('get-glossary-terms', { glossary: this.glossaryId });
+            } else {
+                console.log('[termsPanel] 未设置术语库ID');
+            }
+        });
+        toolbar.appendChild(getAllTerms);
+
         this.originSpan = document.createElement('span');
         this.originSpan.style.marginLeft = '10px';
         this.originSpan.style.marginTop = '4px';
@@ -66,6 +81,36 @@ class TermsPanel {
             }
         });
         observer.observe(this.container, config);
+
+        this.electron.ipcRenderer.on('set-glossary-terms', (event: any, terms: any[]) => {
+            console.log('[termsPanel] 收到全部术语:', terms.length);
+            this.terms = [];
+            for (let term of terms) {
+                this.terms.push({
+                    srcLang: 'zh',
+                    tgtLang: 'en',
+                    source: term.source || '',
+                    target: term.target || '',
+                    origin: ''
+                });
+            }
+            this.refreshTable();
+        });
+
+        this.electron.ipcRenderer.on('set-matched-terms', (event: any, matchedTerms: any[]) => {
+            console.log('[termsPanel] 收到匹配术语:', matchedTerms.length);
+            this.terms = [];
+            for (let term of matchedTerms) {
+                this.terms.push({
+                    srcLang: 'zh',
+                    tgtLang: 'en',
+                    source: term.source || '',
+                    target: term.target || '',
+                    origin: '匹配'
+                });
+            }
+            this.refreshTable();
+        });
     }
 
     clear(): void {
@@ -73,6 +118,20 @@ class TermsPanel {
         this.selected = undefined;
         this.terms = [];
         this.originSpan.innerText = '';
+        this.rows = [];
+    }
+
+    showLoading(): void {
+        this.table.innerHTML = '';
+        let row: HTMLTableRowElement = document.createElement('tr');
+        let td: HTMLTableCellElement = document.createElement('td');
+        td.colSpan = 3;
+        td.innerText = '正在匹配术语...';
+        td.style.textAlign = 'center';
+        td.style.fontStyle = 'italic';
+        row.appendChild(td);
+        this.table.appendChild(row);
+        this.terms = [];
         this.rows = [];
     }
 
@@ -88,14 +147,20 @@ class TermsPanel {
     }
 
     setTerms(terms: Term[]): void {
-        if (terms.length === 0) {
-            this.clear();
-            return;
-        }
         this.terms = terms;
         this.table.innerHTML = '';
-        let length: number = terms.length;
         this.rows = [];
+        if (terms.length === 0) {
+            let row: HTMLTableRowElement = document.createElement('tr');
+            let td: HTMLTableCellElement = document.createElement('td');
+            td.colSpan = 3;
+            td.innerText = '未匹配到术语';
+            td.style.textAlign = 'center';
+            row.appendChild(td);
+            this.table.appendChild(row);
+            return;
+        }
+        let length: number = terms.length;
         for (let i: number = 0; i < length; i++) {
             let term: Term = terms[i];
             let row: HTMLTableRowElement = document.createElement('tr');
@@ -108,6 +173,7 @@ class TermsPanel {
                 this.originSpan.innerText = term.origin;
                 row.classList.add('selected');
                 this.selectedIndex = i;
+                this.insertTermTranslation(term.target);
             });
             this.table.appendChild(row);
 
@@ -165,5 +231,34 @@ class TermsPanel {
             this.originSpan.innerText = this.terms[this.selectedIndex].origin;
             this.rows[this.selectedIndex].scrollIntoView()
         }
+    }
+
+    setGlossaryId(glossaryId: string): void {
+        this.glossaryId = glossaryId;
+        console.log('[termsPanel] 设置术语库ID:', glossaryId);
+    }
+
+    setMatchedTerms(matchedTerms: any[]): void {
+        console.log('[termsPanel] 设置匹配术语:', matchedTerms.length);
+        this.terms = [];
+        for (let term of matchedTerms) {
+            this.terms.push({
+                srcLang: 'zh',
+                tgtLang: 'en',
+                source: term.source || '',
+                target: term.target || '',
+                origin: '匹配'
+            });
+        }
+        this.setTerms(this.terms);
+    }
+
+    refreshTable(): void {
+        this.setTerms(this.terms);
+    }
+
+    insertTermTranslation(translation: string): void {
+        // 向翻译界面发送插入译文的事件
+        this.electron.ipcRenderer.send('insert-translation', { translation: translation });
     }
 }
