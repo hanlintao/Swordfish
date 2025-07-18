@@ -33,21 +33,21 @@ class Main {
 
         Main.main = document.getElementById('main') as HTMLDivElement;
 
-        let projectsTab = new Tab('projects', 'Projects', false, Main.tabHolder);
+        let projectsTab = new Tab('projects', '项目', false, Main.tabHolder);
         this.projectsView = new ProjectsView(projectsTab.getContainer());
         projectsTab.getLabelDiv().addEventListener('click', () => {
             this.projectsView.setSizes();
         });
         Main.tabHolder.addTab(projectsTab);
 
-        let memoriesTab = new Tab('memories', 'Memories', false, Main.tabHolder);
+        let memoriesTab = new Tab('memories', '记忆库', false, Main.tabHolder);
         this.memoriesView = new MemoriesView(memoriesTab.getContainer());
         memoriesTab.getLabelDiv().addEventListener('click', () => {
             this.memoriesView.setSizes();
         });
         Main.tabHolder.addTab(memoriesTab);
 
-        let glossariesTab = new Tab('glossaries', 'Glossaries', false, Main.tabHolder);
+        let glossariesTab = new Tab('glossaries', '术语库', false, Main.tabHolder);
         this.glossariesView = new GlossariesView(glossariesTab.getContainer());
         glossariesTab.getLabelDiv().addEventListener('click', () => {
             this.glossariesView.setSizes();
