@@ -628,6 +628,8 @@ class TranslationView {
 
         let memLabel: HTMLLabelElement = document.createElement('label');
         memLabel.style.marginTop = '4px';
+        memLabel.style.whiteSpace = 'nowrap';
+        memLabel.style.minWidth = '45px';
         memLabel.innerHTML = '记忆库';
         memLabel.setAttribute('for', 'memSelect' + this.projectId);
         this.topBar.appendChild(memLabel);
@@ -655,6 +657,8 @@ class TranslationView {
         let glossLabel: HTMLLabelElement = document.createElement('label');
         glossLabel.style.marginLeft = '10px';
         glossLabel.style.marginTop = '4px';
+        glossLabel.style.whiteSpace = 'nowrap';
+        glossLabel.style.minWidth = '45px';
         glossLabel.innerHTML = '术语库';
         glossLabel.setAttribute('for', 'glossSelect' + this.projectId);
         this.topBar.appendChild(glossLabel);
