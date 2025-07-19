@@ -392,6 +392,9 @@ class GlossariesView {
             tr.addEventListener('click', (event: MouseEvent) => {
                 this.clicked(tr, gloss, checkBox);
             });
+            tr.addEventListener('dblclick', (event: MouseEvent) => {
+                this.dblclicked(tr, gloss);
+            });
             this.tbody.appendChild(tr);
 
             let td = document.createElement('td');
@@ -458,6 +461,15 @@ class GlossariesView {
             tr.classList.remove('selected');
         }
         checkbox.checked = !isSelected;
+    }
+
+    dblclicked(tr: HTMLTableRowElement, glossary: Memory): void {
+        console.log('双击打开术语库管理:', glossary.name, glossary.id);
+        // 发送IPC消息打开术语管理窗口
+        this.electron.ipcRenderer.send('open-glossary-manager', {
+            glossaryId: glossary.id,
+            glossaryName: glossary.name
+        });
     }
 
     searchTerm(): void {

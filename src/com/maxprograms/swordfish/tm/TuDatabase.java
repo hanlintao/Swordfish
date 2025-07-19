@@ -63,6 +63,9 @@ public class TuDatabase {
 		if (result == null) {
 			result = new Element("tu");
 			result.setAttribute("id", tuid);
+		} else {
+			// 确保返回的Element始终包含正确的ID
+			result.setAttribute("id", tuid);
 		}
 		return result;
 	}

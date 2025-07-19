@@ -43,6 +43,15 @@ class TermSearch {
         this.electron.ipcRenderer.on('set-selected-text', (event: Electron.IpcRendererEvent, arg: { selected: string, lang?: string, srcLang: string, tgtLang: string }) => {
             this.setParams(arg);
         });
+        this.electron.ipcRenderer.on('refresh-search-results', () => {
+            console.log('收到刷新搜索结果请求');
+            // 如果有搜索文本，重新执行搜索
+            let searchText = (document.getElementById('searchText') as HTMLInputElement).value;
+            if (searchText.trim()) {
+                console.log('重新执行搜索:', searchText);
+                this.search();
+            }
+        });
         (document.getElementById('similarity') as HTMLSelectElement).value = '70';
         (document.getElementById('searchText') as HTMLInputElement).focus();
         (document.getElementById('languagesSelect') as HTMLSelectElement).addEventListener('change', () => {

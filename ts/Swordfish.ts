@@ -43,7 +43,9 @@ export class Swordfish {
     static concordanceSearchWindow: BrowserWindow;
     static termSearchWindow: BrowserWindow;
     static iatePluginWindow: BrowserWindow;
-    static addTermWindow: BrowserWindow;
+    	static addTermWindow: BrowserWindow;
+	    static editTermWindow: BrowserWindow | null;
+    static glossaryManagerWindow: BrowserWindow;
     static goToWindow: BrowserWindow;
     static sortSegmentsWindow: BrowserWindow;
     static changeCaseWindow: BrowserWindow;
@@ -442,11 +444,26 @@ export class Swordfish {
         ipcMain.on('show-add-term', (event: IpcMainEvent, glossary: string) => {
             Swordfish.showAddTerm(glossary);
         });
-        ipcMain.on('close-addTerm', () => {
-            Swordfish.addTermWindow.close();
-        });
-        ipcMain.on('add-to-glossary', (event: IpcMainEvent, arg: any) => {
-            Swordfish.addToGlossary(arg);
+        		ipcMain.on('close-addTerm', () => {
+			Swordfish.addTermWindow.close();
+		});
+		ipcMain.on('close-editTerm', () => {
+			if (Swordfish.editTermWindow && !Swordfish.editTermWindow.isDestroyed()) {
+				Swordfish.editTermWindow.close();
+			}
+		});
+        		ipcMain.on('add-to-glossary', (event: IpcMainEvent, arg: any) => {
+			Swordfish.addToGlossary(arg);
+		});
+		ipcMain.on('update-term', (event: IpcMainEvent, arg: any) => {
+			Swordfish.updateTerm(arg);
+		});
+		ipcMain.on('delete-term', (event: IpcMainEvent, arg: any) => {
+			Swordfish.deleteTerm(arg);
+		});
+		        ipcMain.on('edit-term', (event: IpcMainEvent, arg: any) => {
+            console.log('收到edit-term请求:', arg);
+            Swordfish.showEditTerm(arg.glossary, arg.termId, arg.term);
         });
         ipcMain.on('show-import-tmx', (event: IpcMainEvent, arg: any) => {
             Swordfish.showImportTMX(arg);
@@ -957,6 +974,40 @@ export class Swordfish {
         ipcMain.on('fix-spaceErrors', (event: IpcMainEvent) => {
             Swordfish.mainWindow.webContents.send('remember-segment');
             Swordfish.fixSpaceErrors(event);
+        });
+        ipcMain.on('open-glossary-manager', (event: IpcMainEvent, arg: any) => {
+            console.log('打开术语库管理窗口:', arg);
+            Swordfish.showGlossaryManager(arg.glossaryId, arg.glossaryName);
+        });
+        ipcMain.on('close-glossary-manager', () => {
+            if (Swordfish.glossaryManagerWindow && !Swordfish.glossaryManagerWindow.isDestroyed()) {
+                Swordfish.glossaryManagerWindow.close();
+            }
+        });
+        ipcMain.on('get-glossary-manager-terms', (event: IpcMainEvent, arg: any) => {
+            console.log('[get-glossary-manager-terms] 请求参数:', JSON.stringify(arg));
+            Swordfish.sendRequest('/glossaries/terms', { glossary: arg.glossaryId },
+                (data: any) => {
+                    console.log('[get-glossary-manager-terms] 后端返回:', JSON.stringify(data));
+                    if (data.terms) {
+                        event.sender.send('set-glossary-manager-terms', data.terms);
+                    } else {
+                        event.sender.send('set-glossary-manager-terms', []);
+                    }
+                },
+                (reason: string) => {
+                    console.log('[get-glossary-manager-terms] 请求失败:', reason);
+                    event.sender.send('set-glossary-manager-terms', []);
+                }
+            );
+        });
+        ipcMain.on('show-add-term-dialog', (event: IpcMainEvent, arg: any) => {
+            Swordfish.glossaryParam = arg.glossaryId;
+            Swordfish.showAddTerm(arg);
+        });
+        ipcMain.on('export-glossary-manager', (event: IpcMainEvent, arg: any) => {
+            // 复用现有的导出功能
+            Swordfish.mainWindow.webContents.send('export-glossary');
         });
         ipcMain.on('get-glossary-terms', (event: IpcMainEvent, arg: any) => {
             console.log('[get-glossary-terms] 请求参数:', JSON.stringify(arg));
@@ -4808,6 +4859,43 @@ export class Swordfish {
         Swordfish.setLocation(this.concordanceSearchWindow, 'concordanceSearch.html');
     }
 
+    static showGlossaryManager(glossaryId: string, glossaryName: string): void {
+        this.glossaryManagerWindow = new BrowserWindow({
+            parent: this.mainWindow,
+            width: 900,
+            height: 600,
+            minimizable: false,
+            maximizable: true,
+            resizable: true,
+            show: false,
+            icon: this.iconPath,
+            titleBarStyle: process.platform === 'darwin' ? 'default' : undefined,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false
+            }
+        });
+        this.glossaryManagerWindow.setMenu(null);
+        let filePath = Swordfish.path.join(app.getAppPath(), 'html', 'glossaryManager.html');
+        let fileUrl: URL = new URL('file://' + filePath);
+        this.glossaryManagerWindow.loadURL(fileUrl.href);
+        this.glossaryManagerWindow.once('ready-to-show', () => {
+            this.glossaryManagerWindow.show();
+        });
+        this.glossaryManagerWindow.on('close', () => {
+            this.mainWindow.focus();
+        });
+        Swordfish.setLocation(this.glossaryManagerWindow, 'glossaryManager.html');
+        
+        // 传递术语库信息
+        this.glossaryManagerWindow.webContents.once('did-finish-load', () => {
+            this.glossaryManagerWindow.webContents.send('set-glossary-info', {
+                glossaryId: glossaryId,
+                glossaryName: glossaryName
+            });
+        });
+    }
+
     static concordanceSearch(event: IpcMainEvent, arg: any): void {
         event.sender.send('start-waiting');
         Swordfish.sendRequest('/memories/concordance', arg,
@@ -4959,7 +5047,9 @@ export class Swordfish {
                     icon: this.iconPath,
                     webPreferences: {
                         nodeIntegration: true,
-                        contextIsolation: false
+                        contextIsolation: false,
+                        webSecurity: false,
+                        allowRunningInsecureContent: true
                     }
                 });
                 Swordfish.htmlTitle = 'Term Search';
@@ -5012,6 +5102,48 @@ export class Swordfish {
         Swordfish.setLocation(this.addTermWindow, 'addTerm.html');
     }
 
+    static showEditTerm(glossary: string, termId: string, term: any) {
+        this.editTermWindow = new BrowserWindow({
+            parent: this.mainWindow,
+            width: 500,
+            height: 300,
+            minimizable: false,
+            maximizable: false,
+            resizable: false,
+            show: false,
+            icon: this.iconPath,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false
+            }
+        });
+        this.editTermWindow.setMenu(null);
+        let filePath = Swordfish.path.join(app.getAppPath(), 'html', 'editTerm.html');
+        let fileUrl: URL = new URL('file://' + filePath);
+        this.editTermWindow.loadURL(fileUrl.href);
+        this.editTermWindow.once('ready-to-show', () => {
+            this.editTermWindow!.show();
+        });
+        this.editTermWindow.on('close', () => {
+            this.mainWindow.focus();
+        });
+        Swordfish.setLocation(this.editTermWindow, 'editTerm.html');
+        
+        // 传递编辑参数
+        this.editTermWindow.webContents.once('did-finish-load', () => {
+            console.log('发送术语编辑参数:', {
+                glossary: glossary,
+                termId: termId,
+                term: term
+            });
+            this.editTermWindow!.webContents.send('set-edit-term-params', {
+                glossary: glossary,
+                termId: termId,
+                term: term
+            });
+        });
+    }
+
     static addToGlossary(arg: any): void {
         Swordfish.sendRequest('/glossaries/addTerm', arg,
             (data: any) => {
@@ -5041,6 +5173,100 @@ export class Swordfish {
                         Swordfish.addTermWindow.close();
                     }
                 }, 800);
+            }
+        );
+    }
+
+    static updateTerm(arg: any): void {
+        Swordfish.sendRequest('/glossaries/updateTerm', arg,
+            (data: any) => {
+                let isSuccess = false;
+                let message = '';
+                if (data && typeof data === 'object' && data.status === Swordfish.SUCCESS) {
+                    isSuccess = true;
+                    message = '术语更新成功';
+                } else if (data && typeof data === 'object' && data.reason) {
+                    message = data.reason;
+                } else if (data && typeof data === 'string') {
+                    message = data;
+                } else {
+                    message = '更新术语失败，未知错误';
+                }
+                Swordfish.showMessage({ type: isSuccess ? 'info' : 'error', message });
+                if (Swordfish.editTermWindow && !Swordfish.editTermWindow.isDestroyed()) {
+                    Swordfish.editTermWindow.close();
+                }
+                // 如果更新成功，刷新术语搜索结果
+                if (isSuccess && Swordfish.termSearchWindow) {
+                    console.log('更新成功，刷新术语搜索结果');
+                    Swordfish.termSearchWindow.webContents.send('refresh-search-results');
+                }
+            },
+            (reason: string) => {
+                Swordfish.showMessage({ type: 'error', message: reason });
+                if (Swordfish.editTermWindow && !Swordfish.editTermWindow.isDestroyed()) {
+                    Swordfish.editTermWindow.close();
+                }
+            }
+        );
+    }
+
+    static deleteTerm(arg: any): void {
+        Swordfish.sendRequest('/glossaries/deleteTerm', arg,
+            (data: any) => {
+                let isSuccess = false;
+                let message = '';
+                if (data && typeof data === 'object' && data.status === Swordfish.SUCCESS) {
+                    isSuccess = true;
+                    message = '术语删除成功';
+                } else if (data && typeof data === 'object' && data.reason) {
+                    message = data.reason;
+                } else if (data && typeof data === 'string') {
+                    message = data;
+                } else {
+                    message = '删除术语失败，未知错误';
+                }
+                
+                // 先关闭编辑窗口，避免后续操作中的对象访问错误
+                if (Swordfish.editTermWindow && !Swordfish.editTermWindow.isDestroyed()) {
+                    Swordfish.editTermWindow.close();
+                    Swordfish.editTermWindow = null;
+                }
+                
+                // 显示消息
+                Swordfish.showMessage({ type: isSuccess ? 'info' : 'error', message });
+                
+                // 如果删除成功，刷新相关窗口
+                if (isSuccess) {
+                    // 刷新术语搜索结果
+                    if (Swordfish.termSearchWindow && !Swordfish.termSearchWindow.isDestroyed()) {
+                        console.log('删除成功，刷新术语搜索结果');
+                        setTimeout(() => {
+                            if (Swordfish.termSearchWindow && !Swordfish.termSearchWindow.isDestroyed()) {
+                                Swordfish.termSearchWindow.webContents.send('refresh-search-results');
+                            }
+                        }, 100);
+                    }
+                    
+                    // 刷新术语库管理器
+                    if (Swordfish.glossaryManagerWindow && !Swordfish.glossaryManagerWindow.isDestroyed()) {
+                        console.log('删除成功，刷新术语库管理器');
+                        setTimeout(() => {
+                            if (Swordfish.glossaryManagerWindow && !Swordfish.glossaryManagerWindow.isDestroyed()) {
+                                Swordfish.glossaryManagerWindow.webContents.send('refresh-terms');
+                            }
+                        }, 100);
+                    }
+                }
+            },
+            (reason: string) => {
+                // 先关闭编辑窗口
+                if (Swordfish.editTermWindow && !Swordfish.editTermWindow.isDestroyed()) {
+                    Swordfish.editTermWindow.close();
+                    Swordfish.editTermWindow = null;
+                }
+                // 显示错误消息
+                Swordfish.showMessage({ type: 'error', message: reason });
             }
         );
     }

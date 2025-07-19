@@ -107,11 +107,15 @@ public class GlossariesHandler implements HttpHandler {
 				response = getProcessStatus(request);
 			} else if ("/glossaries/search".equals(url)) {
 				response = searchTerm(request);
-			} else if ("/glossaries/addTerm".equals(url)) {
-				response = addTerm(request);
-			} else if ("/glossaries/terms".equals(url)) {
-				response = getAllTerms(request);
-			} else {
+					} else if ("/glossaries/addTerm".equals(url)) {
+			response = addTerm(request);
+		} else if ("/glossaries/updateTerm".equals(url)) {
+			response = updateTerm(request);
+		} else if ("/glossaries/deleteTerm".equals(url)) {
+			response = deleteTerm(request);
+		} else if ("/glossaries/terms".equals(url)) {
+			response = getAllTerms(request);
+		} else {
 				MessageFormat mf = new MessageFormat(Messages.getString("GlossariesHandler.1"));
 				response.put(Constants.REASON, mf.format(new String[] { url }));
 			}
@@ -520,6 +524,83 @@ public class GlossariesHandler implements HttpHandler {
 		return result;
 	}
 
+	private JSONObject updateTerm(String request) {
+		JSONObject result = new JSONObject();
+		JSONObject json = new JSONObject(request);
+		if (!json.has("glossary")) {
+			result.put(Constants.REASON, Messages.getString("GlossariesHandler.14"));
+			return result;
+		}
+		if (!json.has("termId")) {
+			result.put(Constants.REASON, "缺少术语ID参数");
+			return result;
+		}
+		try {
+			String glossary = json.getString("glossary");
+			String termId = json.getString("termId");
+			
+			// 先删除原术语
+			Map<String, Memory> glossaries = getGlossaries();
+			openGlossary(glossaries.get(glossary));
+			ITmEngine engine = getEngine(glossary);
+			engine.removeTu(termId);
+			
+			// 添加新术语
+			Element tu = new Element("tu");
+			tu.setAttribute("id", termId);
+			Element srcTuv = new Element("tuv");
+			srcTuv.setAttribute("xml:lang", json.getString("srcLang"));
+			tu.addContent(srcTuv);
+			Element srcSeg = new Element("seg");
+			srcSeg.setText(json.getString("sourceTerm"));
+			srcTuv.addContent(srcSeg);
+			Element tgtTuv = new Element("tuv");
+			tgtTuv.setAttribute("xml:lang", json.getString("tgtLang"));
+			tu.addContent(tgtTuv);
+			Element tgtSeg = new Element("seg");
+			tgtSeg.setText(json.getString("targetTerm"));
+			tgtTuv.addContent(tgtSeg);
+			
+			engine.storeTu(tu);
+			engine.commit();
+			closeGlossary(glossary);
+		} catch (IOException | SQLException | URISyntaxException | SAXException | ParserConfigurationException e) {
+			logger.log(Level.ERROR, e);
+			result.put("result", Constants.ERROR);
+			result.put(Constants.REASON, e.getMessage());
+		}
+		return result;
+	}
+
+	private JSONObject deleteTerm(String request) {
+		JSONObject result = new JSONObject();
+		JSONObject json = new JSONObject(request);
+		if (!json.has("glossary")) {
+			result.put(Constants.REASON, Messages.getString("GlossariesHandler.14"));
+			return result;
+		}
+		if (!json.has("termId")) {
+			result.put(Constants.REASON, "缺少术语ID参数");
+			return result;
+		}
+		try {
+			String glossary = json.getString("glossary");
+			String termId = json.getString("termId");
+			
+			Map<String, Memory> glossaries = getGlossaries();
+			openGlossary(glossaries.get(glossary));
+			ITmEngine engine = getEngine(glossary);
+			engine.removeTu(termId);
+			engine.commit();
+			closeGlossary(glossary);
+		} catch (IOException | SQLException | URISyntaxException | SAXException | ParserConfigurationException e) {
+			logger.log(Level.ERROR, e);
+			result.put("result", Constants.ERROR);
+			result.put(Constants.REASON, e.getMessage());
+		}
+		return result;
+	}
+
 	public static JSONObject searchTerm(String request) {
 		JSONObject result = new JSONObject();
 		JSONObject json = new JSONObject(request);
@@ -539,7 +620,7 @@ public class GlossariesHandler implements HttpHandler {
 			matches.addAll(getEngine(glossary).searchAll(searchStr, srcLang, similarity, caseSensitive));
 			closeGlossary(glossary);
 			result.put("count", matches.size());
-			result.put("html", generateHTML(matches));
+			result.put("html", generateHTML(matches, glossary));
 		} catch (IOException | SAXException | ParserConfigurationException | SQLException | URISyntaxException e) {
 			logger.log(Level.ERROR, e);
 			result.put("result", Constants.ERROR);
@@ -548,7 +629,7 @@ public class GlossariesHandler implements HttpHandler {
 		return result;
 	}
 
-	private static String generateHTML(List<Element> matches)
+	private static String generateHTML(List<Element> matches, String glossary)
 			throws IOException, SAXException, ParserConfigurationException {
 		StringBuilder builder = new StringBuilder();
 		builder.append("<table class='stripes'><tr>");
@@ -559,13 +640,122 @@ public class GlossariesHandler implements HttpHandler {
 			builder.append(st.next().getDescription());
 			builder.append("</th>");
 		}
+		builder.append("<th>操作</th>");
 		builder.append("</tr>");
 		for (int i = 0; i < matches.size(); i++) {
 			builder.append("<tr>");
 			builder.append(parseTU(matches.get(i), languages));
+			builder.append("<td class='center'>");
+			String termId = matches.get(i).getAttributeValue("id");
+			// 如果没有ID，生成一个临时ID
+			if (termId == null || termId.isEmpty()) {
+				termId = "term_" + System.currentTimeMillis() + "_" + i;
+				System.out.println("[generateHTML] 术语没有ID，生成临时ID: " + termId);
+			} else {
+				System.out.println("[generateHTML] 找到术语ID: " + termId);
+			}
+			
+			// 提取术语的源文本和目标文本
+			String sourceText = "";
+			String targetText = "";
+			String srcLang = "";
+			String tgtLang = "";
+			
+			Element element = matches.get(i);
+			List<Element> tuvs = element.getChildren("tuv");
+			for (Element tuv : tuvs) {
+				String lang = tuv.getAttributeValue("xml:lang");
+				Element seg = tuv.getChild("seg");
+				if (seg != null) {
+					String text = MemoriesHandler.pureText(seg);
+					if (lang.startsWith("zh")) {
+						sourceText = text;
+						srcLang = lang;
+					} else if (lang.startsWith("en")) {
+						targetText = text;
+						tgtLang = lang;
+					}
+				}
+			}
+			
+			// 转义JavaScript字符串中的特殊字符
+			String escapedSource = sourceText.replace("\"", "\\\"").replace("'", "\\'");
+			String escapedTarget = targetText.replace("\"", "\\\"").replace("'", "\\'");
+			
+			builder.append("<button onclick='alert(\"编辑术语: " + termId + "\"); console.log(\"编辑\", \"" + termId + "\"); if(window.electron) { try { window.electron.ipcRenderer.send(\"edit-term\", {glossary: \"" + glossary + "\", termId: \"" + termId + "\", term: {sourceTerm: \"" + escapedSource + "\", targetTerm: \"" + escapedTarget + "\", srcLang: \"" + srcLang + "\", tgtLang: \"" + tgtLang + "\"}}); } catch(e) { alert(\"IPC错误: \" + e.message); } } else { alert(\"electron不可用\"); }' class='smallButton' style='cursor: pointer;'>编辑</button> ");
+			builder.append("<button onclick='alert(\"删除术语: " + termId + "\"); if(confirm(\"确定删除?\")) { console.log(\"删除\", \"" + termId + "\"); if(window.electron) { try { window.electron.ipcRenderer.send(\"delete-term\", {glossary: \"" + glossary + "\", termId: \"" + termId + "\"}); } catch(e) { alert(\"删除IPC错误: \" + e.message); } } else { alert(\"electron不可用\"); } }' class='smallButton' style='background-color: #ff4444; cursor: pointer;'>删除</button>");
+			builder.append("</td>");
 			builder.append("</tr>");
 		}
 		builder.append("</table>");
+		builder.append("<br>");
+		builder.append("<script>");
+		builder.append("console.log('脚本加载完成');");
+		builder.append("window.currentGlossary = '" + glossary + "';");
+		builder.append("console.log('设置当前术语库:', window.currentGlossary);");
+		builder.append("");
+		builder.append("function editTerm(termId) {");
+		builder.append("  console.log('=== 编辑术语被点击 ===');");
+		builder.append("  console.log('术语ID:', termId);");
+		builder.append("  console.log('当前术语库:', window.currentGlossary);");
+		builder.append("  console.log('window.electron 存在:', !!window.electron);");
+		builder.append("  ");
+		builder.append("  alert('编辑按钮被点击！术语ID: ' + termId);");
+		builder.append("  ");
+		builder.append("  if (window.electron && window.electron.ipcRenderer) {");
+		builder.append("    console.log('发送 edit-term IPC 消息');");
+		builder.append("    try {");
+		builder.append("      window.electron.ipcRenderer.send('edit-term', {");
+		builder.append("        glossary: window.currentGlossary,");
+		builder.append("        termId: termId");
+		builder.append("      });");
+		builder.append("      console.log('IPC消息发送成功');");
+		builder.append("    } catch (error) {");
+		builder.append("      console.error('IPC发送失败:', error);");
+		builder.append("      alert('IPC发送失败: ' + error.message);");
+		builder.append("    }");
+		builder.append("  } else {");
+		builder.append("    console.error('electron对象不可用');");
+		builder.append("    alert('electron对象不可用，编辑功能无法使用');");
+		builder.append("  }");
+		builder.append("}");
+		builder.append("");
+		builder.append("function deleteTerm(termId) {");
+		builder.append("  console.log('=== 删除术语被点击 ===');");
+		builder.append("  console.log('术语ID:', termId);");
+		builder.append("  ");
+		builder.append("  if (confirm('确定要删除这个术语吗？此操作不可撤销。')) {");
+		builder.append("    alert('确认删除术语: ' + termId);");
+		builder.append("    ");
+		builder.append("    if (window.electron && window.electron.ipcRenderer) {");
+		builder.append("      console.log('发送 delete-term IPC 消息');");
+		builder.append("      try {");
+		builder.append("        window.electron.ipcRenderer.send('delete-term', {");
+		builder.append("          glossary: window.currentGlossary,");
+		builder.append("          termId: termId");
+		builder.append("        });");
+		builder.append("        console.log('删除IPC消息发送成功');");
+		builder.append("      } catch (error) {");
+		builder.append("        console.error('删除IPC发送失败:', error);");
+		builder.append("        alert('删除IPC发送失败: ' + error.message);");
+		builder.append("      }");
+		builder.append("    } else {");
+		builder.append("      console.error('electron对象不可用');");
+		builder.append("      alert('electron对象不可用，删除功能无法使用');");
+		builder.append("    }");
+		builder.append("  }");
+		builder.append("}");
+		builder.append("");
+		builder.append("// 页面加载完成后的测试");
+		builder.append("document.addEventListener('DOMContentLoaded', function() {");
+		builder.append("  console.log('DOM加载完成');");
+		builder.append("  console.log('所有按钮数量:', document.querySelectorAll('button').length);");
+		builder.append("});");
+		builder.append("");
+		builder.append("// 立即测试");
+		builder.append("console.log('当前时间:', new Date().toISOString());");
+		builder.append("console.log('按钮数量:', document.querySelectorAll ? document.querySelectorAll('button').length : '查询器不可用');");
+		builder.append("</script>");
 		return builder.toString();
 	}
 
@@ -613,11 +803,16 @@ public class GlossariesHandler implements HttpHandler {
 	private static JSONObject getAllTerms(String request) {
 		JSONObject result = new JSONObject();
 		JSONObject json = new JSONObject(request);
-		if (!json.has("glossary")) {
-			result.put(Constants.REASON, "缺少 glossary 参数");
+		// 支持两种参数名：glossary 和 glossaryId（术语管理器使用 glossaryId）
+		String glossary = null;
+		if (json.has("glossary")) {
+			glossary = json.getString("glossary");
+		} else if (json.has("glossaryId")) {
+			glossary = json.getString("glossaryId");
+		} else {
+			result.put(Constants.REASON, "缺少 glossary 或 glossaryId 参数");
 			return result;
 		}
-		String glossary = json.getString("glossary");
 		System.out.println("[getAllTerms] 请求glossary: " + glossary);
 		try {
 			Map<String, Memory> glossaries = getGlossaries();
@@ -633,7 +828,8 @@ public class GlossariesHandler implements HttpHandler {
 			for (com.maxprograms.xml.Element tu : terms) {
 				Map<String, String> langMap = new java.util.Hashtable<>();
 				java.util.List<com.maxprograms.xml.Element> tuvs = tu.getChildren("tuv");
-				System.out.println("[getAllTerms] 处理术语单元，tuv数量: " + tuvs.size());
+				String tuId = tu.getAttributeValue("id");
+				System.out.println("[getAllTerms] 处理术语单元，ID: " + tuId + ", tuv数量: " + tuvs.size());
 				
 				// 收集所有语言变体到Map中
 				for (com.maxprograms.xml.Element tuv : tuvs) {
@@ -670,13 +866,19 @@ public class GlossariesHandler implements HttpHandler {
 				// 只有当同时有源语言和目标语言文本时才创建术语
 				if (sourceText != null && targetText != null) {
 					JSONObject termObj = new JSONObject();
+					// 使用前面提取的tuId
+					if (tuId != null && !tuId.isEmpty()) {
+						termObj.put("id", tuId);
+						System.out.println("[getAllTerms] 添加完整术语: id=" + tuId + ", source=" + sourceText + ", target=" + targetText);
+					} else {
+						System.out.println("[getAllTerms] 警告：术语没有ID: source=" + sourceText + ", target=" + targetText);
+					}
 					termObj.put("source", sourceText);
 					termObj.put("target", targetText);
 					termObj.put("srcLang", langMap.containsKey("zh-CN") ? "zh-CN" : "zh");
 					termObj.put("tgtLang", langMap.containsKey("en-US") ? "en-US" : "en");
 					termObj.put("origin", getGlossaryName(glossary));
 					arr.put(termObj);
-					System.out.println("[getAllTerms] 添加完整术语: source=" + sourceText + ", target=" + targetText);
 				} else {
 					System.out.println("[getAllTerms] 跳过不完整术语，可用语言: " + langMap.keySet().toString());
 				}
